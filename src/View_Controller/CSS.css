@@ -1,0 +1,30 @@
+    #pane {
+        -fx-background-color: #CCCCCC;
+        -fx-border-color: #999999;
+    }
+    .table-view {
+        -fx-border-color: #999999;
+    }
+    .table-row-cell:even {
+        -fx-background-color: #EEEEEE;
+    }
+    .table-view .column-header .label {
+        -fx-font-size: 14 px;
+        -fx-font-weight: bold;
+        -fx-alignment: center-left;
+    }
+    .button {
+        -fx-border-color: #000000;
+        -fx-border-radius: 5;
+        -fx-background-radius: 5;
+    }
+    .text-field {
+        -fx-border-color: #999999;
+        -fx-border-radius: 5;
+        -fx-background-radius: 5;
+    }
+    .radio-button .radio {
+        -fx-border-radius: 15px;
+        -fx-border-color: #999999;
+    }
+
