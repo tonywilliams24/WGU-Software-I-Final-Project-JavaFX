@@ -110,8 +110,14 @@ public class ModifyPartScreenController {
         partPriceField.setText(String.valueOf(part.getPrice()));
         partMaxField.setText((String.valueOf(part.getMax())));
         partMinField.setText((String.valueOf(part.getMin())));
-        if(part instanceof InHouse) partUniqueField.setText(String.valueOf(((InHouse) part).getMachineID()));
-        else partUniqueField.setText(((Outsourced)part).getCompanyName());
+        if(part instanceof InHouse) {
+            partInHouseRadio.isSelected();
+            partUniqueField.setText(String.valueOf(((InHouse) part).getMachineID()));
+        }
+        else {
+            partOutsourcedRadio.isSelected();
+            partUniqueField.setText(((Outsourced) part).getCompanyName());
+        }
 
     }
 }
