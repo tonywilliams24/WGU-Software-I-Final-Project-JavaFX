@@ -111,11 +111,11 @@ public class ModifyPartScreenController {
         partMaxField.setText((String.valueOf(part.getMax())));
         partMinField.setText((String.valueOf(part.getMin())));
         if(part instanceof InHouse) {
-            partInHouseRadio.isSelected();
+            partInHouseRadio.setSelected(true);
             partUniqueField.setText(String.valueOf(((InHouse) part).getMachineID()));
         }
         else {
-            partOutsourcedRadio.isSelected();
+            partOutsourcedRadio.setSelected(true);
             partUniqueField.setText(((Outsourced) part).getCompanyName());
         }
 
