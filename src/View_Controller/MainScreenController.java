@@ -3,6 +3,7 @@ package View_Controller;
 import Model.Inventory;
 import Model.Part;
 import Model.Product;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -26,6 +27,39 @@ public class MainScreenController implements Initializable {
     Stage stage;
     Parent scene;
 
+    ObservableList<Part> searchPartResult(String search) {
+        if(!(Inventory.getAllSearchedParts().isEmpty())) {
+            Inventory.getAllSearchedParts().clear();
+        }
+        for(Part part : Inventory.getAllParts()) {
+            if(Integer.toString(part.getId()).contains(search) || part.getName().contains(search)) {
+                Inventory.getAllSearchedParts().add(part);
+            }
+        }
+        if(Inventory.getAllSearchedParts().isEmpty()){
+            return Inventory.getAllParts();
+        }
+        else {
+            return Inventory.getAllSearchedParts();
+        }
+    }
+
+    ObservableList<Product> searchProductResult(String search) {
+        if(!(Inventory.getAllSearchedProducts().isEmpty())) {
+            Inventory.getAllSearchedProducts().clear();
+        }
+        for(Product product : Inventory.getAllProducts()) {
+            if(Integer.toString(product.getId()).contains(search) || product.getName().contains(search)) {
+                Inventory.getAllSearchedProducts().add(product);
+            }
+        }
+        if(Inventory.getAllSearchedProducts().isEmpty()){
+            return Inventory.getAllProducts();
+        }
+        else {
+            return Inventory.getAllSearchedProducts();
+        }
+    }
 
     @FXML
     private AnchorPane pane;
@@ -106,14 +140,24 @@ public class MainScreenController implements Initializable {
 
     @FXML
     void partModifyHandler(MouseEvent event) throws IOException {
+
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/View_Controller/ModifyPartScreen.fxml"));
+        loader.load();
+
+        ModifyPartScreenController MPSController = loader.getController();
+        MPSController.sendPart(partTable.getSelectionModel().getSelectedItem());
+
+
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("/View_Controller/ModifyPartScreen.fxml"));
+        Parent scene = loader.getRoot();
         stage.setScene(new Scene(scene));
-        stage.show();
+        stage.showAndWait();
     }
 
     @FXML
     void partSearchHandler(MouseEvent event) {
+        partTable.setItems(searchPartResult(partSearchField.getText()));
 
     }
 
@@ -141,7 +185,7 @@ public class MainScreenController implements Initializable {
 
     @FXML
     void prodSearchHandler(MouseEvent event) {
-
+        prodTable.setItems(searchProductResult(prodSearchField.getText()));
     }
 
     @Override

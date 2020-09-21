@@ -5,9 +5,6 @@
     .table-view {
         -fx-border-color: #999999;
     }
-    .table-row-cell:even {
-        -fx-background-color: #EEEEEE;
-    }
     .table-view .column-header .label {
         -fx-font-size: 14 px;
         -fx-font-weight: bold;

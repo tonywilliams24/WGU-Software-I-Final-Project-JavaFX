@@ -9,6 +9,8 @@ public class Inventory {
 
     private static ObservableList<Part> allParts = FXCollections.observableArrayList();
     private static ObservableList<Product> allProducts = FXCollections.observableArrayList();
+    private static ObservableList<Part> allSearchedParts = FXCollections.observableArrayList();
+    private static ObservableList<Product> allSearchedProducts = FXCollections.observableArrayList();
     private static int partID = 0;
     private static int productID = 0;
 
@@ -83,4 +85,11 @@ public class Inventory {
         return allProducts;
     }
 
+    public static ObservableList<Part> getAllSearchedParts() {
+        return allSearchedParts;
+    }
+
+    public static ObservableList<Product> getAllSearchedProducts() {
+        return allSearchedProducts;
+    }
 }

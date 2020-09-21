@@ -1,5 +1,8 @@
 package View_Controller;
 
+import Model.InHouse;
+import Model.Outsourced;
+import Model.Part;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -99,4 +102,16 @@ public class ModifyPartScreenController {
 
     }
 
+    public void sendPart(Part part) {
+
+        partIDField.setText(String.valueOf(part.getId()));
+        partNameField.setText((part.getName()));
+        partInvField.setText(String.valueOf(part.getStock()));
+        partPriceField.setText(String.valueOf(part.getPrice()));
+        partMaxField.setText((String.valueOf(part.getMax())));
+        partMinField.setText((String.valueOf(part.getMin())));
+        if(part instanceof InHouse) partUniqueField.setText(String.valueOf(((InHouse) part).getMachineID()));
+        else partUniqueField.setText(((Outsourced)part).getCompanyName());
+
+    }
 }

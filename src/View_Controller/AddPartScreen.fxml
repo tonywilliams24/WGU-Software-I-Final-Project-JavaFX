@@ -57,13 +57,6 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <HBox alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="399.0" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                     <children>
-                        <TextField fx:id="partMaxField" maxWidth="100.0" prefHeight="35.0" prefWidth="100.0" promptText="Max" />
-                        <Label fx:id="partMinLabel" text="Min" />
-                        <TextField fx:id="partMinField" maxWidth="100.0" prefHeight="35.0" prefWidth="100.0" promptText="Min" />
-                     </children>
-                  </HBox>
                   <Label fx:id="partIDLabel" text="ID" />
                   <Label fx:id="partNameLabel" text="Name" GridPane.rowIndex="1" />
                   <Label fx:id="PartInvLabel" text="Inv" GridPane.rowIndex="2" />
@@ -74,6 +67,13 @@
                   <TextField fx:id="partNameField" maxWidth="150.0" prefHeight="35.0" prefWidth="200.0" promptText="Part Name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <TextField fx:id="partInvField" maxWidth="150.0" prefHeight="35.0" prefWidth="200.0" promptText="Inv" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="partPriceField" maxWidth="150.0" prefHeight="35.0" prefWidth="200.0" promptText="Price/Cost" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <HBox alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="399.0" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                     <children>
+                        <TextField fx:id="partMaxField" maxWidth="100.0" prefHeight="35.0" prefWidth="100.0" promptText="Max" />
+                        <Label fx:id="partMinLabel" text="Min" />
+                        <TextField fx:id="partMinField" maxWidth="100.0" prefHeight="35.0" prefWidth="100.0" promptText="Min" />
+                     </children>
+                  </HBox>
                   <TextField fx:id="partUniqueField" maxWidth="110.0" prefHeight="35.0" promptText="Mach ID" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                </children>
                <VBox.margin>

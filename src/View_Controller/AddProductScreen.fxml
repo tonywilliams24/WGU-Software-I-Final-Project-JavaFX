@@ -85,10 +85,10 @@
                   </HBox>
                   <TableView fx:id="prodTable1" layoutX="10.0" layoutY="110.0" maxWidth="520.0" minWidth="520.0" prefHeight="188.0" prefWidth="520.0">
                      <columns>
-                        <TableColumn minWidth="50.0" prefWidth="130.0" text="prod ID" />
-                        <TableColumn minWidth="50.0" prefWidth="130.0" text="prod Name" />
-                        <TableColumn minWidth="50.0" prefWidth="130.0" text="Inventory Level" />
-                        <TableColumn minWidth="50.0" prefWidth="130.0" text="Price per Unit" />
+                        <TableColumn fx:id="partIDCol" minWidth="50.0" prefWidth="130.0" text="Part ID" />
+                        <TableColumn fx:id="partNameCol" minWidth="50.0" prefWidth="130.0" text="Part Name" />
+                        <TableColumn fx:id="partInvCol" minWidth="50.0" prefWidth="130.0" text="Inventory Level" />
+                        <TableColumn fx:id="partPriceCol" minWidth="50.0" prefWidth="130.0" text="Price per Unit" />
                      </columns>
                      <VBox.margin>
                         <Insets bottom="-10.0" />
@@ -105,10 +105,10 @@
                   </HBox>
                   <TableView fx:id="prodTable" maxWidth="520.0" minWidth="520.0" prefHeight="188.0" prefWidth="520.0">
                      <columns>
-                        <TableColumn minWidth="50.0" prefWidth="130.0" text="prod ID" />
-                        <TableColumn minWidth="50.0" prefWidth="130.0" text="prod Name" />
-                        <TableColumn minWidth="50.0" prefWidth="130.0" text="Inventory Level" />
-                        <TableColumn minWidth="50.0" prefWidth="130.0" text="Price per Unit" />
+                        <TableColumn fx:id="partIdCol2" minWidth="50.0" prefWidth="130.0" text="Part ID" />
+                        <TableColumn fx:id="partNameCol2" minWidth="50.0" prefWidth="130.0" text="Part Name" />
+                        <TableColumn fx:id="partInvCol2" minWidth="50.0" prefWidth="130.0" text="Inventory Level" />
+                        <TableColumn fx:id="partPriceCol2" minWidth="50.0" prefWidth="130.0" text="Price per Unit" />
                      </columns>
                      <VBox.margin>
                         <Insets bottom="-10.0" />

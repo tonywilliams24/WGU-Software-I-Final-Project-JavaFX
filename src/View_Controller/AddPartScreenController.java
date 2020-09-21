@@ -37,15 +37,6 @@ public class AddPartScreenController {
     private RadioButton partOutsourcedRadio;
 
     @FXML
-    private TextField partMaxField;
-
-    @FXML
-    private Label partMinLabel;
-
-    @FXML
-    private TextField partMinField;
-
-    @FXML
     private Label partIDLabel;
 
     @FXML
@@ -56,9 +47,6 @@ public class AddPartScreenController {
 
     @FXML
     private Label partPriceLabel;
-
-    @FXML
-    private Label partMaxLabel;
 
     @FXML
     private TextField partIDField;
@@ -77,6 +65,18 @@ public class AddPartScreenController {
 
     @FXML
     private Button partCancelButton;
+
+    @FXML
+    private Label partMaxLabel;
+
+    @FXML
+    private TextField partMaxField;
+
+    @FXML
+    private Label partMinLabel;
+
+    @FXML
+    private TextField partMinField;
 
     @FXML
     private Label partUniqueLabel;
