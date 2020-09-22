@@ -28,7 +28,7 @@
                         <Insets bottom="20.0" left="20.0" top="20.0" />
                      </HBox.margin>
                   </Label>
-                  <RadioButton fx:id="partInHouseRadio" mnemonicParsing="false" text="In-House">
+                  <RadioButton fx:id="partInHouseRadio" mnemonicParsing="false" onAction="#partInHouseRadioHandler" text="In-House">
                      <HBox.margin>
                         <Insets bottom="20.0" left="38.0" right="40.0" top="20.0" />
                      </HBox.margin>
@@ -36,14 +36,14 @@
                         <ToggleGroup fx:id="partRadioGroup" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton fx:id="partOutsourcedRadio" mnemonicParsing="false" text="Outsourced" toggleGroup="$partRadioGroup">
+                  <RadioButton fx:id="partOutsourcedRadio" mnemonicParsing="false" onAction="#partOutsourcedRadioHandler" text="Outsourced" toggleGroup="$partRadioGroup">
                      <HBox.margin>
                         <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
                      </HBox.margin>
                   </RadioButton>
                </children>
             </HBox>
-            <GridPane fx:id="partUniqueLabel" prefHeight="405.0" prefWidth="400.0">
+            <GridPane prefHeight="405.0" prefWidth="400.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="10.0" prefWidth="136.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="418.0" minWidth="10.0" prefWidth="264.0" />
@@ -69,7 +69,7 @@
                   <Label fx:id="PartInvLabel" text="Inv" GridPane.rowIndex="2" />
                   <Label fx:id="partPriceLabel" text="Price/Cost" GridPane.rowIndex="3" />
                   <Label fx:id="partMaxLabel" text="Max" GridPane.rowIndex="4" />
-                  <Label fx:id="partCompanyLabel" text="Company Name" GridPane.rowIndex="5" />
+                  <Label fx:id="partUniqueLabel" text="Company Name" GridPane.rowIndex="5" />
                   <TextField fx:id="partIDField" maxWidth="150.0" prefHeight="35.0" prefWidth="75.0" GridPane.columnIndex="1" />
                   <TextField fx:id="partNameField" maxWidth="150.0" prefHeight="35.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <TextField fx:id="partInvField" maxWidth="150.0" prefHeight="35.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />

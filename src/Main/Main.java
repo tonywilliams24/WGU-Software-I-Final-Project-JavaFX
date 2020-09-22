@@ -31,7 +31,7 @@ public class Main extends Application {
         Inventory.incProductID();
         InHouse inTest = new InHouse(1,"test1", 6.00, 3, 2, 4, 100);
         Inventory.incPartID();
-        Outsourced outTest = new Outsourced(2, "test2", 8.00, 5, 3, 20, "Co:");
+        Outsourced outTest = new Outsourced(2, "test2", 8.00, 5, 3, 20, "ABC Company");
         Inventory.incPartID();
 
         Inventory.addPart(inTest);

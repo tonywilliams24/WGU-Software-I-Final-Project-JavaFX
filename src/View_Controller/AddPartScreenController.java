@@ -97,9 +97,6 @@ public class AddPartScreenController {
     @FXML
     void partSaveHandler(MouseEvent event) throws IOException {
 
-        // Currently only creates an Outsourced Part
-
-
         int id = Inventory.incPartID();
         String name = partNameField.getText();
         int stock = Integer.parseInt(partInvField.getText());
