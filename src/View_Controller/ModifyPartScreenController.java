@@ -9,11 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -101,27 +97,63 @@ public class ModifyPartScreenController {
 
     @FXML
     void partSaveHandler(MouseEvent event) throws IOException {
-        // Need to delete original part
 
-        int id = Integer.parseInt(partIDField.getText());
-        String name = partNameField.getText();
-        int stock = Integer.parseInt(partInvField.getText());
-        double price = Double.parseDouble(partPriceField.getText());
-        int min = Integer.parseInt(partMinField.getText());
-        int max = Integer.parseInt(partMaxField.getText());
+        // Validate Input
+        MainScreenController.checkInt(partIDField);
+        MainScreenController.checkInt(partInvField);
+        MainScreenController.checkDbl(partPriceField);
+        MainScreenController.checkInt(partMinField);
+        MainScreenController.checkInt(partMaxField);
 
-        if(partInHouseRadio.isSelected()) {
-            int machineID = Integer.parseInt(partUniqueField.getText());
-            Inventory.addPart(new InHouse(id, name, price, stock, min, max, machineID));
+        try {
+            int id = Integer.parseInt(partIDField.getText());
+            String name = partNameField.getText();
+            double price = Double.parseDouble(partPriceField.getText());
+            int stock = Integer.parseInt(partInvField.getText());
+            int min = Integer.parseInt(partMinField.getText());
+            int max = Integer.parseInt(partMaxField.getText());
+
+            if (partInHouseRadio.isSelected()) {
+                int machineID = Integer.parseInt(partUniqueField.getText());
+                try {
+                    updatePart(id, new InHouse(id, name, price, stock, min, max, machineID)) ;
+                }
+                catch (Exception e) {
+                    // Give a pop up warning that Part ID does not exist, and ask to create new part instead or cancel
+                    // Also warn that new part ID will be auto-incremented and not necessarily the input number
+                    System.out.println("Part does not exist in Inventory, new part will be created using the next auto-generated ID");
+                    id = Inventory.incPartID();
+                    Inventory.addPart(new InHouse(id, name, price, stock, min, max, machineID));
+                }
+            } else {
+                String companyName = partUniqueField.getText();
+                try {
+                    updatePart(id, new Outsourced(id, name, price, stock, min, max, companyName)) ;
+                }
+                catch (Exception e) {
+                    // Give a pop up warning that Part ID does not exist, and ask to create new part instead or cancel
+                    // Also warn that new part ID will be auto-incremented and not necessarily the input number
+                    System.out.println("Part does not exist in Inventory, new part will be created using the next auto-generated ID");
+                    id = Inventory.incPartID();
+                    Inventory.addPart(new Outsourced(id, name, price, stock, min, max, companyName));
+                }
+            }
+            MainScreenController.checkStock(partInvField, min, max);
+            stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+            scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
+            stage.setScene(new Scene(scene));
+            stage.show();
         }
-        else {
-            String companyName = partUniqueField.getText();
-            Inventory.addPart(new Outsourced(id, name, price, stock, min, max, companyName));
+        catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid Input Type");
+            alert.setContentText("Please make sure you are entering the correct input type");
+            alert.showAndWait();
         }
-        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
-        stage.setScene(new Scene(scene));
-        stage.show();
+        catch (IllegalArgumentException e) {
+
+        }
+
 
     }
 
@@ -162,5 +194,17 @@ public class ModifyPartScreenController {
         partUniqueField.clear();
         partUniqueField.setPromptText("Company Name");
         if(unique[0].equals("Outsourced")) partUniqueField.setText(unique[1]);
+    }
+
+    public void updatePart(int partId, Part part) throws NoSuchFieldException {
+        int index = -1;
+        for (Part p : Inventory.getAllParts()) {
+            index++;
+            if(p.getId() == partId) {
+                Inventory.getAllParts().set(index, part);
+                return;
+            }
+        }
+        throw new NoSuchFieldException("Part Does Not Exist");
     }
 }

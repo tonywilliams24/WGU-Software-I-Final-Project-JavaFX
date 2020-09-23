@@ -8,10 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -186,6 +183,49 @@ public class MainScreenController implements Initializable {
     @FXML
     void prodSearchHandler(MouseEvent event) {
         prodTable.setItems(searchProductResult(prodSearchField.getText()));
+    }
+
+    public static void checkInt(TextField f) {
+        int i;
+        try {i = Integer.parseInt(f.getText());}
+        catch (NumberFormatException e) {f.setStyle("-fx-border-color: red"); }
+    }
+
+    public static void checkDbl(TextField f) {
+        double d;
+        try {d = Double.parseDouble(f.getText());}
+        catch (NumberFormatException e) {f.setStyle("-fx-border-color: red"); }
+    }
+
+    public static void checkMaxMin(TextField minF, TextField maxF) {
+        if(Double.parseDouble(maxF.getText()) < Double.parseDouble(minF.getText())) {
+            minF.setStyle("-fx-border-color: red");
+            maxF.setStyle("-fx-border-color: red");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Max / Min Error");
+            alert.setContentText("The maximum amount is less than minimum amount");
+            alert.showAndWait();
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public static void checkStock(TextField stock, int min, int max) {
+        if(Double.parseDouble(stock.getText()) < min) {
+            stock.setStyle("-fx-border-color: red");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Stock Error");
+            alert.setContentText("Input amount is less than minimum stock amount");
+            alert.showAndWait();
+            throw new IllegalArgumentException();
+        }
+        if(Double.parseDouble(stock.getText()) > max) {
+            stock.setStyle("-fx-border-color: red");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Stock Error");
+            alert.setContentText("Input amount is greater than maximum stock amount");
+            alert.showAndWait();
+            throw new IllegalArgumentException();
+        }
     }
 
     @Override

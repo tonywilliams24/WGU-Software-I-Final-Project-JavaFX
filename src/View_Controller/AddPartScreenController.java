@@ -3,6 +3,7 @@ package View_Controller;
 import Model.InHouse;
 import Model.Inventory;
 import Model.Outsourced;
+import View_Controller.MainScreenController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -96,6 +97,12 @@ public class AddPartScreenController {
 
     @FXML
     void partSaveHandler(MouseEvent event) throws IOException {
+
+        MainScreenController.checkInt(partIDField);
+        MainScreenController.checkInt(partInvField);
+        MainScreenController.checkDbl(partPriceField);
+        MainScreenController.checkInt(partMinField);
+        MainScreenController.checkInt(partMaxField);
 
         int id = Inventory.incPartID();
         String name = partNameField.getText();
