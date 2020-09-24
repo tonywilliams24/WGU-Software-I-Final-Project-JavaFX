@@ -3,7 +3,6 @@ package View_Controller;
 import Model.InHouse;
 import Model.Inventory;
 import Model.Outsourced;
-import View_Controller.MainScreenController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,9 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-
 import java.io.IOException;
-
 import static View_Controller.MainScreenController.checkPos;
 import static View_Controller.MainScreenController.errorStack;
 
@@ -86,29 +83,29 @@ public class AddPartScreenController {
 
     @FXML
     void partCancelHandler(MouseEvent event) throws IOException {
-
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
         scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
         stage.setScene(new Scene(scene));
         stage.show();
-
     }
 
     @FXML
     void partSaveHandler(MouseEvent event) throws IOException {
 
-// Clear previous validation errors
+        // Clear previous validation errors
         while(!errorStack.empty()) {
             TextField t = errorStack.pop();
             t.setStyle("-fx-border-color: #999999");
         }
 
-        // Validate Input
+        // Input validation used to style Text Fields as erroneous but does not throw error
         MainScreenController.checkInt(partInvField);
         MainScreenController.checkDbl(partPriceField);
         MainScreenController.checkInt(partMinField);
         MainScreenController.checkInt(partMaxField);
 
+        // Input validation that will throw error if unsuccessful and warn user of error
+        // If no errors, will create new Part, based on Part type that is selected
         try {
             int id = Inventory.incPartID();
             String name = partNameField.getText();

@@ -12,12 +12,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.Stack;
 
 import static View_Controller.MainScreenController.checkPos;
 import static View_Controller.MainScreenController.errorStack;
@@ -110,13 +108,16 @@ public class ModifyPartScreenController {
            t.setStyle("-fx-border-color: #999999");
         }
 
-        // Validate Input
+        // Input validation used to style Text Fields as erroneous but does not throw error
         MainScreenController.checkInt(partIDField);
         MainScreenController.checkInt(partInvField);
         MainScreenController.checkDbl(partPriceField);
         MainScreenController.checkInt(partMinField);
         MainScreenController.checkInt(partMaxField);
 
+        // Input validation that will throw error if unsuccessful and warn user of error
+        // If no errors, will update/modify Part, based on Part type that is selected
+        // If Part ID does not match existing, will prompt to create new part instead
         try {
             int id = Integer.parseInt(partIDField.getText());
             checkPos(id);
@@ -188,6 +189,7 @@ public class ModifyPartScreenController {
 
     }
 
+    // Function to bring Part information from Main screen to Modify Part Screen
     public void sendPart(Part part) {
 
         partIDField.setText(String.valueOf(part.getId()));
@@ -227,6 +229,7 @@ public class ModifyPartScreenController {
         if(unique[0].equals("Outsourced")) partUniqueField.setText(unique[1]);
     }
 
+    // Function to update Part in inventory based on user input
     public void updatePart(int partId, Part part) throws NoSuchFieldException {
         int index = -1;
         for (Part p : Inventory.getAllParts()) {
