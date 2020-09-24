@@ -12,15 +12,21 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Optional;
+import java.util.Stack;
+
+import static View_Controller.MainScreenController.checkPos;
+import static View_Controller.MainScreenController.errorStack;
 
 public class ModifyPartScreenController {
 
     Stage stage;
     Parent scene;
-    String unique[];
+    String[] unique;
 
     @FXML
     private AnchorPane pane;
@@ -98,6 +104,12 @@ public class ModifyPartScreenController {
     @FXML
     void partSaveHandler(MouseEvent event) throws IOException {
 
+        // Clear previous validation errors
+        while(!errorStack.empty()) {
+           TextField t = errorStack.pop();
+           t.setStyle("-fx-border-color: #999999");
+        }
+
         // Validate Input
         MainScreenController.checkInt(partIDField);
         MainScreenController.checkInt(partInvField);
@@ -107,23 +119,35 @@ public class ModifyPartScreenController {
 
         try {
             int id = Integer.parseInt(partIDField.getText());
+            checkPos(id);
             String name = partNameField.getText();
             double price = Double.parseDouble(partPriceField.getText());
+            checkPos(price);
             int stock = Integer.parseInt(partInvField.getText());
+            checkPos(stock);
             int min = Integer.parseInt(partMinField.getText());
+            checkPos(min);
             int max = Integer.parseInt(partMaxField.getText());
+            checkPos(max);
 
             if (partInHouseRadio.isSelected()) {
                 int machineID = Integer.parseInt(partUniqueField.getText());
+                checkPos(machineID);
                 try {
                     updatePart(id, new InHouse(id, name, price, stock, min, max, machineID)) ;
                 }
                 catch (Exception e) {
-                    // Give a pop up warning that Part ID does not exist, and ask to create new part instead or cancel
-                    // Also warn that new part ID will be auto-incremented and not necessarily the input number
-                    System.out.println("Part does not exist in Inventory, new part will be created using the next auto-generated ID");
-                    id = Inventory.incPartID();
-                    Inventory.addPart(new InHouse(id, name, price, stock, min, max, machineID));
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Part does not exist in Inventory, new part will be created using the next auto-generated ID");
+                    Optional<ButtonType> confirm = alert.showAndWait();
+                    if(confirm.isPresent() && confirm.get() == ButtonType.OK) {
+                        id = Inventory.incPartID();
+                        Inventory.addPart(new InHouse(id, name, price, stock, min, max, machineID));
+                    }
+                    else {
+                        partIDField.setStyle("-fx-border-color: red");
+                        errorStack.push(partIDField);
+                        throw new IllegalArgumentException("Please enter part number from an existing part");
+                    }
                 }
             } else {
                 String companyName = partUniqueField.getText();
@@ -131,13 +155,20 @@ public class ModifyPartScreenController {
                     updatePart(id, new Outsourced(id, name, price, stock, min, max, companyName)) ;
                 }
                 catch (Exception e) {
-                    // Give a pop up warning that Part ID does not exist, and ask to create new part instead or cancel
-                    // Also warn that new part ID will be auto-incremented and not necessarily the input number
-                    System.out.println("Part does not exist in Inventory, new part will be created using the next auto-generated ID");
-                    id = Inventory.incPartID();
-                    Inventory.addPart(new Outsourced(id, name, price, stock, min, max, companyName));
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Part does not exist in Inventory, new part will be created using the next auto-generated ID");
+                    Optional<ButtonType> confirm = alert.showAndWait();
+                    if(confirm.isPresent() && confirm.get() == ButtonType.OK) {
+                        id = Inventory.incPartID();
+                        Inventory.addPart(new Outsourced(id, name, price, stock, min, max, companyName));
+                    }
+                    else {
+                        partIDField.setStyle("-fx-border-color: red");
+                        errorStack.push(partIDField);
+                        throw new IllegalArgumentException("Please enter part number from an existing part");
+                    }
                 }
             }
+            MainScreenController.checkMaxMin(partMaxField, partMinField, Integer.parseInt(partInvField.getText()));
             MainScreenController.checkStock(partInvField, min, max);
             stage = (Stage)((Button)event.getSource()).getScene().getWindow();
             scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
@@ -147,7 +178,7 @@ public class ModifyPartScreenController {
         catch (NumberFormatException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Invalid Input Type");
-            alert.setContentText("Please make sure you are entering the correct input type");
+            alert.setContentText("Please check input for errors");
             alert.showAndWait();
         }
         catch (IllegalArgumentException e) {

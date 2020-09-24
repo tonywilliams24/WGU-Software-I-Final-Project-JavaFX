@@ -18,11 +18,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Stack;
 
 public class MainScreenController implements Initializable {
 
     Stage stage;
     Parent scene;
+    static Stack<TextField> errorStack = new Stack<>();
 
     ObservableList<Part> searchPartResult(String search) {
         if(!(Inventory.getAllSearchedParts().isEmpty())) {
@@ -185,41 +187,95 @@ public class MainScreenController implements Initializable {
         prodTable.setItems(searchProductResult(prodSearchField.getText()));
     }
 
+    public static void checkPos(Double d) {
+        if(d<0) throw new NumberFormatException("Number must be positive");
+    }
+
+    public static void checkPos(int i) {
+        if(i<0) throw new NumberFormatException("Number must be positive");
+    }
+
     public static void checkInt(TextField f) {
         int i;
-        try {i = Integer.parseInt(f.getText());}
-        catch (NumberFormatException e) {f.setStyle("-fx-border-color: red"); }
+        try {
+            i = Integer.parseInt(f.getText());
+            checkPos(i);
+        }
+        catch (NumberFormatException e) {
+            f.setStyle("-fx-border-color: red");
+            errorStack.push(f);
+        }
     }
 
     public static void checkDbl(TextField f) {
         double d;
-        try {d = Double.parseDouble(f.getText());}
-        catch (NumberFormatException e) {f.setStyle("-fx-border-color: red"); }
+        try {
+            d = Double.parseDouble(f.getText());
+            checkPos(d);
+        }
+        catch (NumberFormatException e) {
+            f.setStyle("-fx-border-color: red");
+            errorStack.push(f);
+        }
     }
 
-    public static void checkMaxMin(TextField minF, TextField maxF) {
-        if(Double.parseDouble(maxF.getText()) < Double.parseDouble(minF.getText())) {
+    public static void checkMaxMin(TextField maxF, TextField minF, int stockInt) {
+        if (Integer.parseInt(maxF.getText()) < Integer.parseInt(minF.getText()) && Integer.parseInt(maxF.getText()) < stockInt && stockInt < Integer.parseInt(minF.getText())) {
             minF.setStyle("-fx-border-color: red");
             maxF.setStyle("-fx-border-color: red");
+            errorStack.push(minF);
+            errorStack.push(maxF);
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Max / Min Error");
-            alert.setContentText("The maximum amount is less than minimum amount");
+            alert.setTitle("Min Input Error");
+            alert.setContentText("Maximum / Minimum amounts are invalid. The values may need to be switched.");
+            alert.showAndWait();
+            throw new IllegalArgumentException();
+        }
+
+        else if (Integer.parseInt(maxF.getText()) < Integer.parseInt(minF.getText()) && Integer.parseInt(maxF.getText()) < stockInt) {
+            maxF.setStyle("-fx-border-color: red");
+            errorStack.push(maxF);
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Max Input Error");
+            alert.setContentText("Maximum amount is less than minimum amount");
+            alert.showAndWait();
+            throw new IllegalArgumentException();
+        }
+        else if (Integer.parseInt(minF.getText()) > Integer.parseInt(maxF.getText()) && Integer.parseInt(minF.getText()) > stockInt) {
+            minF.setStyle("-fx-border-color: red");
+            errorStack.push(minF);
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Min Input Error");
+            alert.setContentText("Minimum amount is greater than maximum amount");
+            alert.showAndWait();
+            throw new IllegalArgumentException();
+        }
+        else if (Integer.parseInt(minF.getText()) > Integer.parseInt(maxF.getText())) {
+            minF.setStyle("-fx-border-color: red");
+            maxF.setStyle("-fx-border-color: red");
+            errorStack.push(minF);
+            errorStack.push(maxF);
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Min Input Error");
+            alert.setContentText("Maximum / Minimum amounts are invalid.");
             alert.showAndWait();
             throw new IllegalArgumentException();
         }
     }
 
     public static void checkStock(TextField stock, int min, int max) {
-        if(Double.parseDouble(stock.getText()) < min) {
+        if(Integer.parseInt(stock.getText()) < min) {
             stock.setStyle("-fx-border-color: red");
+            errorStack.push(stock);
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Stock Error");
             alert.setContentText("Input amount is less than minimum stock amount");
             alert.showAndWait();
             throw new IllegalArgumentException();
         }
-        if(Double.parseDouble(stock.getText()) > max) {
+        if(Integer.parseInt(stock.getText()) > max) {
             stock.setStyle("-fx-border-color: red");
+            errorStack.push(stock);
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Stock Error");
             alert.setContentText("Input amount is greater than maximum stock amount");

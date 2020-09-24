@@ -9,16 +9,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+
+import static View_Controller.MainScreenController.checkPos;
+import static View_Controller.MainScreenController.errorStack;
 
 public class AddPartScreenController {
 
@@ -98,31 +97,55 @@ public class AddPartScreenController {
     @FXML
     void partSaveHandler(MouseEvent event) throws IOException {
 
-        MainScreenController.checkInt(partIDField);
+// Clear previous validation errors
+        while(!errorStack.empty()) {
+            TextField t = errorStack.pop();
+            t.setStyle("-fx-border-color: #999999");
+        }
+
+        // Validate Input
         MainScreenController.checkInt(partInvField);
         MainScreenController.checkDbl(partPriceField);
         MainScreenController.checkInt(partMinField);
         MainScreenController.checkInt(partMaxField);
 
-        int id = Inventory.incPartID();
-        String name = partNameField.getText();
-        int stock = Integer.parseInt(partInvField.getText());
-        double price = Double.parseDouble(partPriceField.getText());
-        int min = Integer.parseInt(partMinField.getText());
-        int max = Integer.parseInt(partMaxField.getText());
+        try {
+            int id = Inventory.incPartID();
+            String name = partNameField.getText();
+            int stock = Integer.parseInt(partInvField.getText());
+            checkPos(stock);
+            double price = Double.parseDouble(partPriceField.getText());
+            checkPos(price);
+            int min = Integer.parseInt(partMinField.getText());
+            checkPos(min);
+            int max = Integer.parseInt(partMaxField.getText());
+            checkPos(max);
 
-        if(partInHouseRadio.isSelected()) {
-            int machineID = Integer.parseInt(partUniqueField.getText());
-            Inventory.addPart(new InHouse(id, name, price, stock, min, max, machineID));
+            if (partInHouseRadio.isSelected()) {
+                int machineID = Integer.parseInt(partUniqueField.getText());
+                checkPos(machineID);
+                Inventory.addPart(new InHouse(id, name, price, stock, min, max, machineID));
+            } else {
+                String companyName = partUniqueField.getText();
+                Inventory.addPart(new Outsourced(id, name, price, stock, min, max, companyName));
+            }
+            MainScreenController.checkMaxMin(partMaxField, partMinField, Integer.parseInt(partInvField.getText()));
+            MainScreenController.checkStock(partInvField, min, max);
+            stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
+            stage.setScene(new Scene(scene));
+            stage.show();
         }
-        else {
-            String companyName = partUniqueField.getText();
-            Inventory.addPart(new Outsourced(id, name, price, stock, min, max, companyName));
+        catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid Input Type");
+            alert.setContentText("Please check input for errors");
+            alert.showAndWait();
         }
-        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
-        stage.setScene(new Scene(scene));
-        stage.show();
+        catch (IllegalArgumentException e) {
+
+        }
+
 
     }
 
