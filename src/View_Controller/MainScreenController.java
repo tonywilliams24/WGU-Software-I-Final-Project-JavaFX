@@ -20,6 +20,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Stack;
 
+import static Model.Inventory.deletePart;
+
 public class MainScreenController implements Initializable {
 
     Stage stage;
@@ -134,6 +136,8 @@ public class MainScreenController implements Initializable {
 
     @FXML
     void partDeleteHandler(MouseEvent event) {
+        deletePart(partTable.getSelectionModel().getSelectedItem());
+        partTable.setItems(Inventory.getAllParts());
 
     }
 
@@ -170,6 +174,7 @@ public class MainScreenController implements Initializable {
 
     @FXML
     void prodDeleteHandler(MouseEvent event) {
+
 
     }
 
