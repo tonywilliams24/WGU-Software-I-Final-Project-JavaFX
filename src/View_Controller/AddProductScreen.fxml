@@ -45,13 +45,6 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <HBox alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="399.0" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                           <children>
-                              <TextField fx:id="prodMaxField" maxWidth="100.0" prefHeight="35.0" prefWidth="100.0" promptText="Max" />
-                              <Label fx:id="prodMinLabel" text="Min" />
-                              <TextField fx:id="prodMinField" maxWidth="100.0" prefHeight="35.0" prefWidth="100.0" promptText="Min" />
-                           </children>
-                        </HBox>
                         <Label fx:id="prodIDLabel" text="ID" />
                         <Label fx:id="prodNameLabel" text="Name" GridPane.rowIndex="1" />
                         <Label fx:id="ProdInvLabel" text="Inv" GridPane.rowIndex="2" />
@@ -61,6 +54,13 @@
                         <TextField fx:id="prodNameField" maxWidth="150.0" prefHeight="35.0" prefWidth="200.0" promptText="prod Name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <TextField fx:id="prodInvField" maxWidth="100.0" prefHeight="35.0" prefWidth="100.0" promptText="Inv" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <TextField fx:id="prodPriceField" maxWidth="100.0" prefHeight="35.0" prefWidth="100.0" promptText="Price/Cost" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="399.0" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <children>
+                              <TextField fx:id="prodMaxField" maxWidth="100.0" prefHeight="35.0" prefWidth="100.0" promptText="Max" />
+                              <Label fx:id="prodMinLabel" text="Min" />
+                              <TextField fx:id="prodMinField" maxWidth="100.0" prefHeight="35.0" prefWidth="100.0" promptText="Min" />
+                           </children>
+                        </HBox>
                      </children>
                      <VBox.margin>
                         <Insets left="20.0" right="20.0" />

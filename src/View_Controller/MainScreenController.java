@@ -184,7 +184,7 @@ public class MainScreenController implements Initializable {
 
     @FXML
     void prodDeleteHandler(MouseEvent event) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete the product?",ButtonType.CANCEL,ButtonType.YES);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Permanently delete the product?",ButtonType.CANCEL,ButtonType.YES);
         Optional<ButtonType> confirm = alert.showAndWait();
         if(confirm.isPresent() && confirm.get() == ButtonType.YES) {
             deleteProduct(prodTable.getSelectionModel().getSelectedItem());

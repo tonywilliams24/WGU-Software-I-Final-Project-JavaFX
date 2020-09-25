@@ -6,15 +6,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class ModifyProdScreenController {
 
@@ -91,11 +89,14 @@ public class ModifyProdScreenController {
 
     @FXML
     void prodCancelHandler(MouseEvent event) throws IOException {
-        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
-        stage.setScene(new Scene(scene));
-        stage.show();
-
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Cancel and return to the Main Screen without making changes?",ButtonType.CANCEL,ButtonType.YES);
+        Optional<ButtonType> confirm = alert.showAndWait();
+        if(confirm.isPresent() && confirm.get() == ButtonType.YES) {
+            stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+            scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
+            stage.setScene(new Scene(scene));
+            stage.show();
+        }
     }
 
     @FXML
