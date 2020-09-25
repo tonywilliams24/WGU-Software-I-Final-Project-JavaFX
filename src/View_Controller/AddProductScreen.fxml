@@ -57,7 +57,7 @@
                         <Label fx:id="ProdInvLabel" text="Inv" GridPane.rowIndex="2" />
                         <Label fx:id="prodPriceLabel" text="Price" GridPane.rowIndex="3" />
                         <Label fx:id="prodMaxLabel" text="Max" GridPane.rowIndex="4" />
-                        <TextField fx:id="prodIDField" maxWidth="150.0" prefHeight="35.0" prefWidth="75.0" promptText="Auto Gen - Disabled" GridPane.columnIndex="1" />
+                        <TextField fx:id="prodIDField" disable="true" editable="false" maxWidth="150.0" prefHeight="35.0" prefWidth="75.0" promptText="Auto Gen - Disabled" GridPane.columnIndex="1" />
                         <TextField fx:id="prodNameField" maxWidth="150.0" prefHeight="35.0" prefWidth="200.0" promptText="prod Name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <TextField fx:id="prodInvField" maxWidth="100.0" prefHeight="35.0" prefWidth="100.0" promptText="Inv" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <TextField fx:id="prodPriceField" maxWidth="100.0" prefHeight="35.0" prefWidth="100.0" promptText="Price/Cost" GridPane.columnIndex="1" GridPane.rowIndex="3" />

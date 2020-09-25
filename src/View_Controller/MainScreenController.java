@@ -14,13 +14,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.fxml.Initializable;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Stack;
 
-import static Model.Inventory.deletePart;
+import static Model.Inventory.*;
 
 public class MainScreenController implements Initializable {
 
@@ -136,26 +136,36 @@ public class MainScreenController implements Initializable {
 
     @FXML
     void partDeleteHandler(MouseEvent event) {
-        deletePart(partTable.getSelectionModel().getSelectedItem());
-        partTable.setItems(Inventory.getAllParts());
-
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Permanently delete the selected part?",ButtonType.CANCEL,ButtonType.YES);
+        Optional<ButtonType> confirm = alert.showAndWait();
+        if(confirm.isPresent() && confirm.get() == ButtonType.YES) {
+            deletePart(partTable.getSelectionModel().getSelectedItem());
+            partTable.setItems(Inventory.getAllParts());
+        }
     }
 
     @FXML
     void partModifyHandler(MouseEvent event) throws IOException {
 
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/View_Controller/ModifyPartScreen.fxml"));
-        loader.load();
+        if (partTable.getSelectionModel().getSelectedItem() == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No Parts Selected");
+            alert.setContentText("Must select a part to modify");
+            alert.showAndWait();
+        }
+        else {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/View_Controller/ModifyPartScreen.fxml"));
+            loader.load();
 
-        ModifyPartScreenController MPSController = loader.getController();
-        MPSController.sendPart(partTable.getSelectionModel().getSelectedItem());
+            ModifyPartScreenController MPSController = loader.getController();
+            MPSController.sendPart(partTable.getSelectionModel().getSelectedItem());
 
-
-        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        Parent scene = loader.getRoot();
-        stage.setScene(new Scene(scene));
-        stage.show();
+            stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            Parent scene = loader.getRoot();
+            stage.setScene(new Scene(scene));
+            stage.show();
+        }
     }
 
     @FXML
@@ -174,8 +184,12 @@ public class MainScreenController implements Initializable {
 
     @FXML
     void prodDeleteHandler(MouseEvent event) {
-
-
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete the product?",ButtonType.CANCEL,ButtonType.YES);
+        Optional<ButtonType> confirm = alert.showAndWait();
+        if(confirm.isPresent() && confirm.get() == ButtonType.YES) {
+            deleteProduct(prodTable.getSelectionModel().getSelectedItem());
+            prodTable.setItems(Inventory.getAllProducts());
+        }
     }
 
     @FXML
@@ -192,12 +206,26 @@ public class MainScreenController implements Initializable {
         prodTable.setItems(searchProductResult(prodSearchField.getText()));
     }
 
-    public static void checkPos(Double d) {
+    public static void checkEmpty(String s) {
+        if(s.trim().isEmpty()) throw new NumberFormatException("Cannot be empty");
+    }
+
+    public static void checkPos(double d) {
         if(d<0) throw new NumberFormatException("Number must be positive");
     }
 
     public static void checkPos(int i) {
         if(i<0) throw new NumberFormatException("Number must be positive");
+    }
+
+    public static void checkString(TextField f) {
+        try {
+            checkEmpty(f.getText());
+        }
+        catch (Exception e) {
+            f.setStyle("-fx-border-color: red");
+            errorStack.push(f);
+        }
     }
 
     public static void checkInt(TextField f) {
@@ -206,7 +234,7 @@ public class MainScreenController implements Initializable {
             i = Integer.parseInt(f.getText());
             checkPos(i);
         }
-        catch (NumberFormatException e) {
+        catch (Exception e) {
             f.setStyle("-fx-border-color: red");
             errorStack.push(f);
         }
@@ -218,7 +246,7 @@ public class MainScreenController implements Initializable {
             d = Double.parseDouble(f.getText());
             checkPos(d);
         }
-        catch (NumberFormatException e) {
+        catch (Exception e) {
             f.setStyle("-fx-border-color: red");
             errorStack.push(f);
         }

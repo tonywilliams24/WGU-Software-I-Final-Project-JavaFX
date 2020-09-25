@@ -13,8 +13,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import java.io.IOException;
-import static View_Controller.MainScreenController.checkPos;
-import static View_Controller.MainScreenController.errorStack;
+import java.util.Optional;
+
+import static Model.Inventory.deletePart;
+import static View_Controller.MainScreenController.*;
 
 public class AddPartScreenController {
 
@@ -83,10 +85,14 @@ public class AddPartScreenController {
 
     @FXML
     void partCancelHandler(MouseEvent event) throws IOException {
-        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
-        stage.setScene(new Scene(scene));
-        stage.show();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Cancel and return to the Main Screen without making changes?",ButtonType.CANCEL,ButtonType.YES);
+        Optional<ButtonType> confirm = alert.showAndWait();
+        if(confirm.isPresent() && confirm.get() == ButtonType.YES) {
+            stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+            scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
+            stage.setScene(new Scene(scene));
+            stage.show();
+        }
     }
 
     @FXML
@@ -99,16 +105,20 @@ public class AddPartScreenController {
         }
 
         // Input validation used to style Text Fields as erroneous but does not throw error
-        MainScreenController.checkInt(partInvField);
-        MainScreenController.checkDbl(partPriceField);
-        MainScreenController.checkInt(partMinField);
-        MainScreenController.checkInt(partMaxField);
+        checkString(partNameField);
+        checkInt(partInvField);
+        checkDbl(partPriceField);
+        checkInt(partMinField);
+        checkInt(partMaxField);
+        if (partInHouseRadio.isSelected()) checkInt(partUniqueField);
+        else checkString(partUniqueField);
 
         // Input validation that will throw error if unsuccessful and warn user of error
         // If no errors, will create new Part, based on Part type that is selected
         try {
             int id = Inventory.incPartID();
             String name = partNameField.getText();
+            checkEmpty(name);
             int stock = Integer.parseInt(partInvField.getText());
             checkPos(stock);
             double price = Double.parseDouble(partPriceField.getText());
@@ -124,10 +134,11 @@ public class AddPartScreenController {
                 Inventory.addPart(new InHouse(id, name, price, stock, min, max, machineID));
             } else {
                 String companyName = partUniqueField.getText();
+                checkEmpty(companyName);
                 Inventory.addPart(new Outsourced(id, name, price, stock, min, max, companyName));
             }
-            MainScreenController.checkMaxMin(partMaxField, partMinField, Integer.parseInt(partInvField.getText()));
-            MainScreenController.checkStock(partInvField, min, max);
+            checkMaxMin(partMaxField, partMinField, Integer.parseInt(partInvField.getText()));
+            checkStock(partInvField, min, max);
             stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
             scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
             stage.setScene(new Scene(scene));

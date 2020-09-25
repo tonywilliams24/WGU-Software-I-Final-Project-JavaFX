@@ -17,8 +17,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Optional;
 
-import static View_Controller.MainScreenController.checkPos;
-import static View_Controller.MainScreenController.errorStack;
+import static View_Controller.MainScreenController.*;
 
 public class ModifyPartScreenController {
 
@@ -91,12 +90,14 @@ public class ModifyPartScreenController {
 
     @FXML
     void partCancelHandler(MouseEvent event) throws IOException {
-
-        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
-        stage.setScene(new Scene(scene));
-        stage.show();
-
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Cancel and return to the Main Screen without making changes?",ButtonType.CANCEL,ButtonType.YES);
+        Optional<ButtonType> confirm = alert.showAndWait();
+        if(confirm.isPresent() && confirm.get() == ButtonType.YES) {
+            stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+            scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
+            stage.setScene(new Scene(scene));
+            stage.show();
+        }
     }
 
     @FXML
@@ -109,11 +110,14 @@ public class ModifyPartScreenController {
         }
 
         // Input validation used to style Text Fields as erroneous but does not throw error
-        MainScreenController.checkInt(partIDField);
-        MainScreenController.checkInt(partInvField);
-        MainScreenController.checkDbl(partPriceField);
-        MainScreenController.checkInt(partMinField);
-        MainScreenController.checkInt(partMaxField);
+        checkInt(partIDField);
+        checkString(partNameField);
+        checkInt(partInvField);
+        checkDbl(partPriceField);
+        checkInt(partMinField);
+        checkInt(partMaxField);
+        if (partInHouseRadio.isSelected()) checkInt(partUniqueField);
+        else checkString(partUniqueField);
 
         // Input validation that will throw error if unsuccessful and warn user of error
         // If no errors, will update/modify Part, based on Part type that is selected
@@ -122,6 +126,7 @@ public class ModifyPartScreenController {
             int id = Integer.parseInt(partIDField.getText());
             checkPos(id);
             String name = partNameField.getText();
+            checkEmpty(name);
             double price = Double.parseDouble(partPriceField.getText());
             checkPos(price);
             int stock = Integer.parseInt(partInvField.getText());
@@ -152,6 +157,7 @@ public class ModifyPartScreenController {
                 }
             } else {
                 String companyName = partUniqueField.getText();
+                checkEmpty(companyName);
                 try {
                     updatePart(id, new Outsourced(id, name, price, stock, min, max, companyName)) ;
                 }
@@ -169,8 +175,8 @@ public class ModifyPartScreenController {
                     }
                 }
             }
-            MainScreenController.checkMaxMin(partMaxField, partMinField, Integer.parseInt(partInvField.getText()));
-            MainScreenController.checkStock(partInvField, min, max);
+            checkMaxMin(partMaxField, partMinField, Integer.parseInt(partInvField.getText()));
+            checkStock(partInvField, min, max);
             stage = (Stage)((Button)event.getSource()).getScene().getWindow();
             scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
             stage.setScene(new Scene(scene));

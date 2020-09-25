@@ -3,8 +3,6 @@ package Model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.io.IOException;
-
 public class Inventory {
 
     private static ObservableList<Part> allParts = FXCollections.observableArrayList();
@@ -75,7 +73,7 @@ public class Inventory {
     public static boolean deletePart(Part selectedPart) {
         return allParts.remove(selectedPart);
     }
-    public static boolean deleteProduct(Part selectedProduct) {
+    public static boolean deleteProduct(Product selectedProduct) {
         return allProducts.remove(selectedProduct);
     }
     public static ObservableList<Part> getAllParts() {
