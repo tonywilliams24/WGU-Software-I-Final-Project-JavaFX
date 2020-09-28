@@ -1,30 +1,20 @@
-// PLEASE SEE ADD PART SCREEN CONTROLLER FOR MORE COMPLETE IMPLEMENTATION
-
 package View_Controller;
 
 import Model.Part;
 import Model.Product;
-import com.sun.org.apache.xml.internal.security.Init;
+
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.Optional;
-import java.util.ResourceBundle;
 
 import static Model.Inventory.getAllParts;
 import static View_Controller.Utility.*;
 
-public class AddProductScreenController implements Initializable {
+public class ModifyProductScreenController {
 
     @FXML
     private AnchorPane pane;
@@ -66,7 +56,7 @@ public class AddProductScreenController implements Initializable {
     private TextField prodPriceField;
 
     @FXML
-    private Button partSearchButton;
+    private Button prodSearchButton;
 
     @FXML
     private TextField partSearchField;
@@ -120,7 +110,7 @@ public class AddProductScreenController implements Initializable {
     private TableColumn<Part, Double> associatedPartPriceCol;
 
     @FXML
-    void partAddHandler(MouseEvent event) {
+    void prodAddHandler(MouseEvent event) {
 
     }
 
@@ -144,14 +134,23 @@ public class AddProductScreenController implements Initializable {
         searchPart(partSearchField, partTable);
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void sendProduct(Product product) {
+
+        // Sets text fields and table based on prod selected from prior screen
+        prodIDField.setText(String.valueOf(product.getId()));
+        prodNameField.setText((product.getName()));
+        prodInvField.setText(String.valueOf(product.getStock()));
+        prodPriceField.setText(String.valueOf(product.getPrice()));
+        prodMaxField.setText((String.valueOf(product.getMax())));
+        prodMinField.setText((String.valueOf(product.getMin())));
+
         partTable.setItems(getAllParts());
         partIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         partInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
         partPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
+        associatedPartTable.setItems(product.getAllAssociatedParts());
         associatedPartIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         associatedPartNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         associatedPartInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));

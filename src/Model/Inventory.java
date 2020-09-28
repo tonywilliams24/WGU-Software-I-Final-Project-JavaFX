@@ -1,13 +1,16 @@
 package Model;
 
+import View_Controller.Utility;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import static View_Controller.Utility.*;
 
 public class Inventory {
 
     private static ObservableList<Part> allParts = FXCollections.observableArrayList();
     private static ObservableList<Product> allProducts = FXCollections.observableArrayList();
-    private static ObservableList<Part> allSearchedParts = FXCollections.observableArrayList();
+    private ObservableList<Part> allSearchedParts = FXCollections.observableArrayList();
     private static ObservableList<Product> allSearchedProducts = FXCollections.observableArrayList();
     private static int partID = 0;
     private static int productID = 0;
@@ -71,7 +74,16 @@ public class Inventory {
         allProducts.remove(++index);
     }
     public static boolean deletePart(Part selectedPart) {
+        for(Product product : getAllProducts()){
+            for(Part part : searchPartResult(selectedPart.getId(),product.getAllAssociatedParts())) {
+                if(selectedPart.getId() == part.getId()) product.deleteAssociatedPart(part);
+            }
+        }
         return allParts.remove(selectedPart);
+    }
+
+    public static boolean deletePart(Part selectedPart, ObservableList<Part> partObservableList) {
+        return partObservableList.remove(selectedPart);
     }
     public static boolean deleteProduct(Product selectedProduct) {
         return allProducts.remove(selectedProduct);
@@ -83,11 +95,59 @@ public class Inventory {
         return allProducts;
     }
 
-    public static ObservableList<Part> getAllSearchedParts() {
+    public ObservableList<Part> getAllSearchedParts() {
         return allSearchedParts;
     }
 
     public static ObservableList<Product> getAllSearchedProducts() {
         return allSearchedProducts;
     }
+
+    public static ObservableList<Part> searchPartResult(int search, ObservableList<Part> partObservableList) {
+        ObservableList<Part> tempPartsList = FXCollections.observableArrayList();
+        for(Part part : partObservableList) {
+            if(part.getId() == search) {
+                tempPartsList.add(part);
+            }
+        }
+        return tempPartsList;
+    }
+
+    public static ObservableList<Part> searchPartResult(String search) {
+        ObservableList<Part> tempPartsList = FXCollections.observableArrayList();
+        search = search.trim();
+        for(Part part : getAllParts()) {
+            if(part.getName().contains(search) || Integer.toString(part.getId()).contains(search)) {
+                tempPartsList.add(part);
+            }
+        }
+        if(tempPartsList.isEmpty()){
+            alertBox(Utility.alertType.error, partNotFound, fieldInput);
+            return getAllParts();
+        }
+        else {
+            return tempPartsList;
+        }
+    }
+
+    public static ObservableList<Product> searchProductResult(String search) {
+        ObservableList<Product> tempProductsList = FXCollections.observableArrayList();
+        search = search.trim();
+        if(!(tempProductsList.isEmpty())) {
+            tempProductsList.clear();
+        }
+        for(Product product : getAllProducts()) {
+            if(product.getName().contains(search) || Integer.toString(product.getId()).contains(search)) {
+                tempProductsList.add(product);
+            }
+        }
+        if(tempProductsList.isEmpty()){
+            alertBox(alertType.error, productNotFound, fieldInput);
+            return getAllProducts();
+        }
+        else {
+            return tempProductsList;
+        }
+    }
+
 }

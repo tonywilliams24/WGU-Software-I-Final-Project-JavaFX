@@ -1,7 +1,11 @@
 package Model;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 public class Product {
 
+    private ObservableList<Part> associatedParts = FXCollections.observableArrayList();
     private int id;
     private String name;
     private double price;
@@ -65,5 +69,35 @@ public class Product {
                 ", min=" + min +
                 ", max=" + max +
                 '}';
+    }
+    
+    public void addAssociatedPart(Part newPart) {
+        associatedParts.add(newPart);
+    }
+    public Part lookupAssociatedPart(int partID) {
+        if(!associatedParts.isEmpty()) {
+            for (int i = 0; i < associatedParts.size(); i++) {
+                if (associatedParts.get(i).getId() == partID) return associatedParts.get(i);
+            }
+        }
+        return null;
+    }
+    public Part lookupAssociatedPart(String partName) {
+        if(!associatedParts.isEmpty()) {
+            for (int i = 0; i < associatedParts.size(); i++) {
+                if (associatedParts.get(i).getName() == partName) return associatedParts.get(i);
+            }
+        }
+        return null;
+    }
+    public void updateAssociatedPart(int index, Part selectedPart) {
+        associatedParts.add(index, selectedPart);
+        associatedParts.remove(++index);
+    }
+    public boolean deleteAssociatedPart(Part selectedPart) {
+        return associatedParts.remove(selectedPart);
+    }
+    public ObservableList<Part> getAllAssociatedParts() {
+        return associatedParts;
     }
 }

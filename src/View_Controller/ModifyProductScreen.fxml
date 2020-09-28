@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="pane" maxWidth="925.0" minWidth="1000.0" prefHeight="600.0" prefWidth="925.0" style="-fx-border-color: #888888; -fx-border-radius: 10; -fx-border-insets: 20 20 20 20;" stylesheets="@CSS.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View_Controller.ModifyProdScreenController">
+<AnchorPane fx:id="pane" maxWidth="925.0" minWidth="1000.0" prefHeight="600.0" prefWidth="925.0" style="-fx-border-color: #888888; -fx-border-radius: 10; -fx-border-insets: 20 20 20 20;" stylesheets="@CSS.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View_Controller.ModifyProductScreenController">
    <children>
       <HBox alignment="BOTTOM_CENTER" prefHeight="600.0" prefWidth="962.0">
          <children>
@@ -75,15 +75,15 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                      <children>
-                        <Button fx:id="prodSearchButton" mnemonicParsing="false" onMouseClicked="#prodSearchHandler" prefHeight="31.0" prefWidth="76.0" text="Search" />
-                        <TextField fx:id="prodSearchField" prefHeight="0.0" prefWidth="141.0" style="-fx-border-color: #000000; -fx-border-radius: 2.5; -fx-background-radius: 2.5;">
+                        <Button fx:id="prodSearchButton" mnemonicParsing="false" onMouseClicked="#partSearchHandler" prefHeight="31.0" prefWidth="76.0" text="Search" />
+                        <TextField fx:id="partSearchField" prefHeight="0.0" prefWidth="141.0" style="-fx-border-color: #000000; -fx-border-radius: 2.5; -fx-background-radius: 2.5;">
                            <font>
                               <Font size="10.0" />
                            </font>
                         </TextField>
                      </children>
                   </HBox>
-                  <TableView fx:id="prodTable1" layoutX="10.0" layoutY="110.0" maxWidth="520.0" minWidth="520.0" prefHeight="188.0" prefWidth="520.0">
+                  <TableView fx:id="partTable" layoutX="10.0" layoutY="110.0" maxWidth="520.0" minWidth="520.0" prefHeight="188.0" prefWidth="520.0">
                      <columns>
                         <TableColumn fx:id="partIdCol" minWidth="50.0" prefWidth="130.0" text="Part ID" />
                         <TableColumn fx:id="partNameCol" minWidth="50.0" prefWidth="130.0" text="Part Name" />
@@ -103,12 +103,12 @@
                         </Button>
                      </children>
                   </HBox>
-                  <TableView fx:id="prodTable" maxWidth="520.0" minWidth="520.0" prefHeight="188.0" prefWidth="520.0">
+                  <TableView fx:id="associatedPartTable" maxWidth="520.0" minWidth="520.0" prefHeight="188.0" prefWidth="520.0">
                      <columns>
-                        <TableColumn fx:id="partIdCol2" minWidth="50.0" prefWidth="130.0" text="Part ID" />
-                        <TableColumn fx:id="partNameCol2" minWidth="50.0" prefWidth="130.0" text="Part Name" />
-                        <TableColumn fx:id="partInvCol2" minWidth="50.0" prefWidth="130.0" text="Inventory Level" />
-                        <TableColumn fx:id="partPriceCol" minWidth="50.0" prefWidth="130.0" text="Price per Unit" />
+                        <TableColumn fx:id="associatedPartIdCol" minWidth="50.0" prefWidth="130.0" text="Part ID" />
+                        <TableColumn fx:id="associatedPartNameCol" minWidth="50.0" prefWidth="130.0" text="Part Name" />
+                        <TableColumn fx:id="associatedPartInvCol" minWidth="50.0" prefWidth="130.0" text="Inventory Level" />
+                        <TableColumn fx:id="associatedPartPriceCol" minWidth="50.0" prefWidth="130.0" text="Price per Unit" />
                      </columns>
                      <VBox.margin>
                         <Insets bottom="-10.0" />
@@ -116,7 +116,7 @@
                   </TableView>
                   <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Button fx:id="prodDeleteButton" mnemonicParsing="false" onMouseClicked="#prodCancelHandler" prefHeight="34.0" prefWidth="84.0" text="Delete">
+                        <Button fx:id="partDeleteButton" mnemonicParsing="false" onMouseClicked="#partDeleteHandler" prefHeight="34.0" prefWidth="84.0" text="Delete">
                            <HBox.margin>
                               <Insets right="20.0" />
                            </HBox.margin>

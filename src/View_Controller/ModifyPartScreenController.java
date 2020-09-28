@@ -6,18 +6,15 @@ import Model.Outsourced;
 import Model.Part;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Optional;
 
-import static View_Controller.MainScreenController.*;
+import static View_Controller.Utility.*;
 
 public class ModifyPartScreenController {
 
@@ -90,120 +87,95 @@ public class ModifyPartScreenController {
 
     @FXML
     void partCancelHandler(MouseEvent event) throws IOException {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Cancel and return to the Main Screen without making changes?",ButtonType.CANCEL,ButtonType.YES);
-        Optional<ButtonType> confirm = alert.showAndWait();
-        if(confirm.isPresent() && confirm.get() == ButtonType.YES) {
-            stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-            scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
-            stage.setScene(new Scene(scene));
-            stage.show();
-        }
+        cancelButton(event);
     }
 
     @FXML
     void partSaveHandler(MouseEvent event) throws IOException {
 
+        // Adds all text fields to an array
+        TextField[] partFields = new TextField[] {
+                partNameField,    // 0
+                partInvField,     // 1
+                partPriceField,   // 2
+                partMaxField,     // 3
+                partMinField,     // 4
+                partUniqueField   // 5
+        };
+
         // Clear previous validation errors
-        while(!errorStack.empty()) {
-           TextField t = errorStack.pop();
-           t.setStyle("-fx-border-color: #999999");
-        }
+        clearValidationErrors(partFields);
 
-        // Input validation used to style Text Fields as erroneous but does not throw error
-        checkInt(partIDField);
-        checkString(partNameField);
-        checkInt(partInvField);
-        checkDbl(partPriceField);
-        checkInt(partMinField);
-        checkInt(partMaxField);
-        if (partInHouseRadio.isSelected()) checkInt(partUniqueField);
-        else checkString(partUniqueField);
+        // Validation that styles text fields but does not throw error
+        // Returns text field to queue for future reference
+        checkString(partFields[0]);
+        checkInt(partFields[1]);
+        checkDbl(partFields[2]);
+        checkInt(partFields[3]);
+        checkInt(partFields[4]);
+        if (partInHouseRadio.isSelected()) checkInt(partFields[5]);
+        else checkString(partFields[5]);
 
-        // Input validation that will throw error if unsuccessful and warn user of error
-        // If no errors, will update/modify Part, based on Part type that is selected
-        // If Part ID does not match existing, will prompt to create new part instead
+        // Input validation that will throw error if unsuccessful
+        // If no errors, will create new Part based on the Part type selected
+        // Will send back to main screen after part is created
+        int id = Integer.parseInt(partIDField.getText());
         try {
-            int id = Integer.parseInt(partIDField.getText());
-            checkPos(id);
-            String name = partNameField.getText();
+            String name = partNameField.getText().trim();
             checkEmpty(name);
-            double price = Double.parseDouble(partPriceField.getText());
-            checkPos(price);
-            int stock = Integer.parseInt(partInvField.getText());
+            int stock = Integer.parseInt(partFields[1].getText().trim());
             checkPos(stock);
-            int min = Integer.parseInt(partMinField.getText());
+            double price = Double.parseDouble(partFields[2].getText().trim());
+            checkPos(price);
+            int min = Integer.parseInt(partFields[4].getText().trim());
             checkPos(min);
-            int max = Integer.parseInt(partMaxField.getText());
+            int max = Integer.parseInt(partFields[3].getText().trim());
             checkPos(max);
+            checkMaxMin(partFields[3], partFields[4], Integer.parseInt(partFields[1].getText().trim()));
+            checkStock(partFields[1], min, max);
 
             if (partInHouseRadio.isSelected()) {
-                int machineID = Integer.parseInt(partUniqueField.getText());
+                int machineID = Integer.parseInt(partFields[5].getText().trim());
                 checkPos(machineID);
-                try {
-                    updatePart(id, new InHouse(id, name, price, stock, min, max, machineID)) ;
-                }
-                catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Part does not exist in Inventory, new part will be created using the next auto-generated ID");
-                    Optional<ButtonType> confirm = alert.showAndWait();
-                    if(confirm.isPresent() && confirm.get() == ButtonType.OK) {
-                        id = Inventory.incPartID();
-                        Inventory.addPart(new InHouse(id, name, price, stock, min, max, machineID));
-                    }
-                    else {
-                        partIDField.setStyle("-fx-border-color: red");
-                        errorStack.push(partIDField);
-                        throw new IllegalArgumentException("Please enter part number from an existing part");
-                    }
-                }
+                updatePart(id, new InHouse(id, name, price, stock, min, max, machineID));
             } else {
-                String companyName = partUniqueField.getText();
+                String companyName = partFields[5].getText().trim();
                 checkEmpty(companyName);
-                try {
-                    updatePart(id, new Outsourced(id, name, price, stock, min, max, companyName)) ;
-                }
-                catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Part does not exist in Inventory, new part will be created using the next auto-generated ID");
-                    Optional<ButtonType> confirm = alert.showAndWait();
-                    if(confirm.isPresent() && confirm.get() == ButtonType.OK) {
-                        id = Inventory.incPartID();
-                        Inventory.addPart(new Outsourced(id, name, price, stock, min, max, companyName));
-                    }
-                    else {
-                        partIDField.setStyle("-fx-border-color: red");
-                        errorStack.push(partIDField);
-                        throw new IllegalArgumentException("Please enter part number from an existing part");
-                    }
-                }
+                updatePart(id, new Outsourced(id, name, price, stock, min, max, companyName));
             }
-            checkMaxMin(partMaxField, partMinField, Integer.parseInt(partInvField.getText()));
-            checkStock(partInvField, min, max);
-            stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-            scene = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
-            stage.setScene(new Scene(scene));
-            stage.show();
+            viewScreen(event, mainScreenFxmlUrl);
         }
+
+        // Catches first error encountered and displays alert box with all items from error queue
         catch (NumberFormatException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Invalid Input Type");
-            alert.setContentText("Please check input for errors");
-            alert.showAndWait();
+            if (partInHouseRadio.isSelected()) buildErrorMap("InHouse");
+            else buildErrorMap("Outsourced");
+            while(!errorQ.isEmpty()) {
+
+                errorBuilder.append(errorMap.get(errorQ.poll().getId()) + "\n");
+            }
+            alertBox(errorFields, errorBuilder, fieldInput);
         }
+
+        // Catches errors that have already generated an alert box
         catch (IllegalArgumentException e) {
-
         }
-
-
     }
 
     // Function to bring Part information from Main screen to Modify Part Screen
     public void sendPart(Part part) {
 
+        // Sets text fields based on part selected from prior screen
         partIDField.setText(String.valueOf(part.getId()));
         partNameField.setText((part.getName()));
         partInvField.setText(String.valueOf(part.getStock()));
         partPriceField.setText(String.valueOf(part.getPrice()));
         partMaxField.setText((String.valueOf(part.getMax())));
         partMinField.setText((String.valueOf(part.getMin())));
+
+        // Checks to see if the part is InHouse or not, and sets the Label and Field accordingly
+        // Also creates a variable to remember the field in case it needs to be recalled
+
         if(part instanceof InHouse) {
             partInHouseRadio.setSelected(true);
             partUniqueLabel.setText("Machine ID");
@@ -216,27 +188,27 @@ public class ModifyPartScreenController {
             partUniqueField.setText(((Outsourced) part).getCompanyName());
             unique = new String[]{"Outsourced", partUniqueField.getText()};
         }
-
-
     }
+
+    // Radio Button Handlers - Changes text in Unique Label and Field based on the selection
     @FXML
     void partInHouseRadioHandler(ActionEvent event) {
         partUniqueLabel.setText("Machine ID");
         partUniqueField.clear();
-        partUniqueField.setPromptText("Machine ID");
         if(unique[0].equals("InHouse")) partUniqueField.setText(unique[1]);
+        else partUniqueField.setPromptText("Machine ID");
     }
 
     @FXML
     void partOutsourcedRadioHandler(ActionEvent event) {
         partUniqueLabel.setText("Company Name");
         partUniqueField.clear();
-        partUniqueField.setPromptText("Company Name");
         if(unique[0].equals("Outsourced")) partUniqueField.setText(unique[1]);
+        else partUniqueField.setPromptText("Company Name");
     }
 
     // Function to update Part in inventory based on user input
-    public void updatePart(int partId, Part part) throws NoSuchFieldException {
+    public void updatePart(int partId, Part part){
         int index = -1;
         for (Part p : Inventory.getAllParts()) {
             index++;
@@ -245,6 +217,5 @@ public class ModifyPartScreenController {
                 return;
             }
         }
-        throw new NoSuchFieldException("Part Does Not Exist");
     }
 }
