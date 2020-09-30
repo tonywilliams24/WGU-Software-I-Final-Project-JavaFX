@@ -79,14 +79,30 @@ public class Inventory {
         return null;
     }
 
-    public static void updatePart(int index, Part selectedPart) {
-        allParts.add(index, selectedPart);
-        allParts.remove(++index);
+    public static void updatePart(int partId, Part part){
+        int index = -1;
+        for (Part p : getAllParts()) {
+            index++;
+            if(p.getId() == partId) {
+                getAllParts().set(index, part);
+                return;
+            }
+        }
     }
 
-    public static void updateProduction(int index, Product selectedProduct) {
-        allProducts.add(index, selectedProduct);
-        allProducts.remove(++index);
+    public static void updateProduct(int productId, Product product){
+        int index = -1;
+        for (Product p : getAllProducts()) {
+            index++;
+            if(p.getId() == productId) {
+                getAllProducts().set(index, product);
+                return;
+            }
+        }
+    }
+
+    public static boolean deletePart(Part selectedPart) {
+        return allParts.remove(selectedPart);
     }
 
     public static boolean deletePart(Part selectedPart, Queue<Product> productQueue) {

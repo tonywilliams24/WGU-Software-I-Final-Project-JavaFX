@@ -3,6 +3,8 @@ package View_Controller;
 import Model.Inventory;
 import Model.Part;
 import Model.Product;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -19,6 +21,14 @@ import java.util.Queue;
 import static Model.Inventory.*;
 
 public class Utility {
+
+    public static void addAssociatedPartButton(TableView<Part> partTable, TableView<Part> associatedPartTable, TableColumn<Part, Integer> partIdCol) {
+        ObservableList<Part> associatedParts = FXCollections.observableArrayList();
+        associatedParts = associatedPartTable.getItems();
+        associatedParts.add(partTable.getSelectionModel().getSelectedItem());
+        associatedPartTable.setItems(associatedParts);
+        associatedPartTable.getSortOrder().add(partIdCol);
+    }
 
     public enum alertType {confirmation, error, warning};
 

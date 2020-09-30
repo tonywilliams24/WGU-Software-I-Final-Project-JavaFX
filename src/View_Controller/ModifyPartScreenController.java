@@ -137,11 +137,11 @@ public class ModifyPartScreenController {
             if (partInHouseRadio.isSelected()) {
                 int machineID = Integer.parseInt(partFields[5].getText().trim());
                 checkPos(machineID);
-                updatePart(id, new InHouse(id, name, price, stock, min, max, machineID));
+                Inventory.updatePart(id, new InHouse(id, name, price, stock, min, max, machineID));
             } else {
                 String companyName = partFields[5].getText().trim();
                 checkEmpty(companyName);
-                updatePart(id, new Outsourced(id, name, price, stock, min, max, companyName));
+                Inventory.updatePart(id, new Outsourced(id, name, price, stock, min, max, companyName));
             }
             viewScreen(event, mainScreenFxmlUrl);
         }
@@ -207,15 +207,4 @@ public class ModifyPartScreenController {
         else partUniqueField.setPromptText("Company Name");
     }
 
-    // Function to update Part in inventory based on user input
-    public void updatePart(int partId, Part part){
-        int index = -1;
-        for (Part p : Inventory.getAllParts()) {
-            index++;
-            if(p.getId() == partId) {
-                Inventory.getAllParts().set(index, part);
-                return;
-            }
-        }
-    }
 }

@@ -2,29 +2,19 @@
 
 package View_Controller;
 
-import Model.InHouse;
-import Model.Outsourced;
-import Model.Part;
-import Model.Product;
-import com.sun.org.apache.xml.internal.security.Init;
+import Model.*;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static Model.Inventory.*;
-import static Model.Inventory.addPart;
 import static View_Controller.Utility.*;
 
 public class AddProductScreenController implements Initializable {
@@ -124,6 +114,16 @@ public class AddProductScreenController implements Initializable {
 
     @FXML
     void partAddHandler(MouseEvent event) {
+        addAssociatedPartButton(partTable, associatedPartTable, partIdCol);
+    }
+
+    @FXML
+    void prodCancelHandler(MouseEvent event) throws IOException {
+        cancelButton(event);
+    }
+
+    @FXML
+    void prodSaveHandler(MouseEvent event) {
 
         // Adds all text fields to an array
         TextField[] prodFields = new TextField[] {
@@ -162,8 +162,8 @@ public class AddProductScreenController implements Initializable {
             checkPos(max);
             checkMaxMin(prodFields[3], prodFields[4], Integer.parseInt(prodFields[1].getText().trim()));
             checkStock(prodFields[1], min, max);
-
             addProduct(new Product(id, name, price, stock, min, max));
+            for(Part associatedPart : associatedPartTable.getItems()) lookupProduct(id).addAssociatedPart(associatedPart);
             viewScreen(event, mainScreenFxmlUrl);
         }
         catch (NumberFormatException e) {
@@ -178,18 +178,6 @@ public class AddProductScreenController implements Initializable {
         // Catches errors that have already generated an alert box
         catch (Exception e) {
         }
-
-
-    }
-
-    @FXML
-    void prodCancelHandler(MouseEvent event) throws IOException {
-        cancelButton(event);
-    }
-
-    @FXML
-    void prodSaveHandler(MouseEvent event) {
-        
     }
 
     @FXML
