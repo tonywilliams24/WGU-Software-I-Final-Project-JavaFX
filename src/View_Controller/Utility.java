@@ -16,33 +16,33 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
 
-import static Model.Inventory.getAllParts;
-import static Model.Inventory.searchPartResult;
+import static Model.Inventory.*;
 
 public class Utility {
-
-    public static final String confirmation = "Confirmation Needed";
-    public static final String fieldInput = "Text Field Input Error";
 
     public enum alertType {confirmation, error, warning};
 
     // Strings for the error messages
     public static final String cancel = "Cancel and return to the Main Screen without making changes?";
-    public static final String deletePart = "Permanently delete the selected part?";
+    public static final String confirmation = "Confirmation Needed";
+    public static final String deletePartMain = "Permanently delete the selected part? This will also remove it as an associated part from the following products: \n" ;
+    public static final String deletePartCancel = "Permanently delete the selected part? The cancel button will not undo this action.";
     public static final String deleteProduct = "Permanently delete the product?";
+    public static final String empty = "Empty Search";
     public static final String errorFields = "Error(s) found in the following field(s): \n";
+    public static final String fieldInput = "Text Field Input Error";
     public static final String invalidMaxMin = "Maximum / Minimum amounts are invalid.";
     public static final String invalidSelection = "Selection Error";
     public static final String maxGreaterMin = "Maximum amount is less than minimum amount";
     public static final String minGreaterMax = "Minimum amount is greater than maximum amount";
+    public static final String notFound = "Not Found";
     public static final String partNotFound = "Part was not found";
     public static final String productNotFound = "Product was not found";
+    public static final String searchFieldEmpty = "Please enter a name or an ID into the search field";
     public static final String selectPartDelete = "Must select a part to delete";
     public static final String selectPartModify = "Must select a part to modify";
     public static final String selectProductDelete = "Must select a product to delete";
     public static final String selectProductModify = "Must select a product to modify";
-
-    public static final String searchFieldEmpty = "Please enter a name or ID into the search field";
     public static final String stockMax = "Input amount is greater than maximum stock amount";
     public static final String stockMin = "Input amount is less than minimum stock amount";
     public static final String switchMaxMin = "Maximum / Minimum amounts are invalid. The values may need to be switched.";
@@ -238,25 +238,29 @@ public class Utility {
             partTable.setItems(searchPartResult(partSearchField.getText()));
         }
         catch(Exception e) {
-            alertBox(alertType.warning, searchFieldEmpty, fieldInput);
-            partTable.setItems(getAllParts());
+            if(partTable.getItems().equals(getAllParts())) alertBox(alertType.error, searchFieldEmpty, empty);
+            else partTable.setItems(getAllParts());
         }
     }
 
     public static void searchProduct(TextField prodSearchField, TableView<Product> prodTable) {
         try {
             checkEmpty(prodSearchField.getText().trim());
-            prodTable.setItems(Inventory.searchProductResult(prodSearchField.getText()));
+            prodTable.setItems(searchProductResult(prodSearchField.getText()));
         }
-        catch (Exception e) { alertBox(alertType.warning, searchFieldEmpty, fieldInput); }
+
+        catch (Exception e) {
+            if(prodTable.getItems().equals((getAllProducts()))) alertBox(alertType.error, searchFieldEmpty, empty);
+            else prodTable.setItems(getAllProducts());
+        }
     }
 
     public static void deleteSelectedPart(TableView<Part> partTable) {
         if (partTable.getSelectionModel().getSelectedItem() == null) {
             alertBox(alertType.error, selectPartDelete, invalidSelection);
         }
-        else if (alertBox(alertType.confirmation, deletePart, confirmation)) {
-            Inventory.deletePart(partTable.getSelectionModel().getSelectedItem(), partTable.getItems());
+        else if (alertBox(alertType.confirmation, deletePartCancel, confirmation)) {
+            deletePart(partTable.getSelectionModel().getSelectedItem(), partTable.getItems());
             partTable.setItems(partTable.getItems());
         }
     }
@@ -267,8 +271,8 @@ public class Utility {
         }
         else {
             if (alertBox(alertType.confirmation, deleteProduct, confirmation)) {
-                Inventory.deleteProduct(prodTable.getSelectionModel().getSelectedItem());
-                prodTable.setItems(Inventory.getAllProducts());
+                deleteProduct(prodTable.getSelectionModel().getSelectedItem());
+                prodTable.setItems(getAllProducts());
             }
         }
     }

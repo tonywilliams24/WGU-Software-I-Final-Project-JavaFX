@@ -2,6 +2,8 @@
 
 package View_Controller;
 
+import Model.InHouse;
+import Model.Outsourced;
 import Model.Part;
 import Model.Product;
 import com.sun.org.apache.xml.internal.security.Init;
@@ -21,7 +23,8 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static Model.Inventory.getAllParts;
+import static Model.Inventory.*;
+import static Model.Inventory.addPart;
 import static View_Controller.Utility.*;
 
 public class AddProductScreenController implements Initializable {
@@ -122,6 +125,61 @@ public class AddProductScreenController implements Initializable {
     @FXML
     void partAddHandler(MouseEvent event) {
 
+        // Adds all text fields to an array
+        TextField[] prodFields = new TextField[] {
+                prodNameField,    // 0
+                prodInvField,     // 1
+                prodPriceField,   // 2
+                prodMaxField,     // 3
+                prodMinField,     // 4
+        };
+
+        // Clear previous validation errors
+        clearValidationErrors(prodFields);
+
+        // Validation that styles text fields but does not throw error
+        // Returns text field to queue for future reference
+        checkString(prodFields[0]);
+        checkInt(prodFields[1]);
+        checkDbl(prodFields[2]);
+        checkInt(prodFields[3]);
+        checkInt(prodFields[4]);
+
+        // Input validation that will throw error if unsuccessful
+        // If no errors, will create new prod based on the prod type selected
+        // Will send back to main screen after prod is created
+        try {
+            int id = incProductID();
+            String name = prodNameField.getText().trim();
+            checkEmpty(name);
+            int stock = Integer.parseInt(prodFields[1].getText().trim());
+            checkPos(stock);
+            double price = Double.parseDouble(prodFields[2].getText().trim());
+            checkPos(price);
+            int min = Integer.parseInt(prodFields[4].getText().trim());
+            checkPos(min);
+            int max = Integer.parseInt(prodFields[3].getText().trim());
+            checkPos(max);
+            checkMaxMin(prodFields[3], prodFields[4], Integer.parseInt(prodFields[1].getText().trim()));
+            checkStock(prodFields[1], min, max);
+
+            addProduct(new Product(id, name, price, stock, min, max));
+            viewScreen(event, mainScreenFxmlUrl);
+        }
+        catch (NumberFormatException e) {
+            buildErrorMap("Product");
+            while(!errorQ.isEmpty()) {
+
+                errorBuilder.append(errorMap.get(errorQ.poll().getId()) + "\n");
+            }
+            alertBox(errorFields, errorBuilder, fieldInput);
+        }
+
+        // Catches errors that have already generated an alert box
+        catch (Exception e) {
+        }
+
+
     }
 
     @FXML
@@ -131,7 +189,7 @@ public class AddProductScreenController implements Initializable {
 
     @FXML
     void prodSaveHandler(MouseEvent event) {
-
+        
     }
 
     @FXML

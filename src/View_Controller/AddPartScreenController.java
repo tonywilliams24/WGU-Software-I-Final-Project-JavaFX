@@ -140,6 +140,7 @@ public class AddPartScreenController {
         }
 
         // Catches first error encountered and displays alert box with all items from queue
+        // Builds the appropriate error map based on the type of part
         catch (NumberFormatException e) {
             if (partInHouseRadio.isSelected()) buildErrorMap("InHouse");
             else buildErrorMap("Outsourced");

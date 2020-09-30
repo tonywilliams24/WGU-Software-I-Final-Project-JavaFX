@@ -12,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Queue;
 import java.util.ResourceBundle;
 
 import static Model.Inventory.*;
@@ -141,5 +142,21 @@ public class MainScreenController implements Initializable {
         prodInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
         prodPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
+    }
+
+
+    // Only to be used on main screen as it deletes the part from all tables
+    private static void deleteSelectedPart(TableView<Part> partTable) {
+        if (partTable.getSelectionModel().getSelectedItem() == null) {
+            alertBox(alertType.error, selectPartDelete, invalidSelection);
+        }
+        else {
+            Queue<Product> deleteQueue = searchAssociatedParts(partTable.getSelectionModel().getSelectedItem());
+            if (alertBox(alertType.confirmation, deletePartMain.concat(getSearchPartBuilder().toString()), confirmation)) {
+                System.out.println(getSearchPartBuilder());
+                deletePart(partTable.getSelectionModel().getSelectedItem(), deleteQueue);
+                partTable.setItems(partTable.getItems());
+            }
+        }
     }
 }

@@ -3,6 +3,8 @@ package Model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.Queue;
+
 public class Product {
 
     private ObservableList<Part> associatedParts = FXCollections.observableArrayList();

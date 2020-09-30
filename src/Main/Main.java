@@ -26,12 +26,12 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 
-        Product prodTest1 = new Product(incProductID(), "Product 1", 5.00, 2, 1, 3);
-        Product prodTest2 = new Product(incProductID(), "Product 2", 5.00, 2, 1, 3);
-        Product prodTest3 = new Product(incProductID(), "Product 3", 5.00, 2, 1, 3);
-        Product prodTest4 = new Product(incProductID(), "Product 4", 5.00, 2, 1, 3);
-        Product prodTest5 = new Product(incProductID(), "Product 5", 5.00, 2, 1, 3);
-        Product prodTest6 = new Product(incProductID(), "Product 5", 5.00, 2, 1, 3);
+        Product prodTest1 = new Product(incProductID(), "Product A 1", 5.00, 2, 1, 3);
+        Product prodTest2 = new Product(incProductID(), "Product A 2", 5.00, 2, 1, 3);
+        Product prodTest3 = new Product(incProductID(), "Product A 3", 5.00, 2, 1, 3);
+        Product prodTest4 = new Product(incProductID(), "Product B 1", 5.00, 2, 1, 3);
+        Product prodTest5 = new Product(incProductID(), "Product B 2", 5.00, 2, 1, 3);
+        Product prodTest6 = new Product(incProductID(), "Product B 3", 5.00, 2, 1, 3);
         InHouse inTest1 = new InHouse(incPartID(),"InHouse1", 6.00, 3, 2, 4, 100);
         InHouse inTest2 = new InHouse(incPartID(),"InHouse2", 6.00, 3, 2, 4, 100);
         InHouse inTest3 = new InHouse(incPartID(),"InHouse3", 6.00, 3, 2, 4, 100);

@@ -24,4 +24,11 @@
         -fx-border-radius: 15px;
         -fx-border-color: #999999;
     }
+    #partSearchField {
+        -fx-font-size: 12px;
+    }
+    #prodSearchField {
+        -fx-font-size: 12px;
+    }
+
 
