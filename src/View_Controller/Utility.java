@@ -22,15 +22,8 @@ import static Model.Inventory.*;
 
 public class Utility {
 
-    public static void addAssociatedPartButton(TableView<Part> partTable, TableView<Part> associatedPartTable, TableColumn<Part, Integer> partIdCol) {
-        ObservableList<Part> associatedParts = FXCollections.observableArrayList();
-        associatedParts = associatedPartTable.getItems();
-        associatedParts.add(partTable.getSelectionModel().getSelectedItem());
-        associatedPartTable.setItems(associatedParts);
-        associatedPartTable.getSortOrder().add(partIdCol);
-    }
-
     public enum alertType {confirmation, error, warning};
+    public enum inventoryLevel {stock, min, max};
 
     // Strings for the error messages
     public static final String cancel = "Cancel and return to the Main Screen without making changes?";
@@ -43,18 +36,28 @@ public class Utility {
     public static final String fieldInput = "Text Field Input Error";
     public static final String invalidMaxMin = "Maximum / Minimum amounts are invalid.";
     public static final String invalidSelection = "Selection Error";
+    public static final String maxEmpty = "Maximum Inventory Level Empty";
     public static final String maxGreaterMin = "Maximum amount is less than minimum amount";
+    public static final String maxSetHundred = "Maximum Inventory level will be set to 100. Do you accept this change?";
+    public static final String minEmpty = "Minimum Inventory Level Empty";
     public static final String minGreaterMax = "Minimum amount is greater than maximum amount";
+    public static final String minSetZero = "Minimum Inventory level will be set to 0. Do you accept this change?";
     public static final String notFound = "Not Found";
+    public static final String noAssociatedParts = "No Associated Parts Found";
+    public static final String partsGreaterProduct = "Cost of the product is less than the cost of the parts";
     public static final String partNotFound = "Part was not found";
+    public static final String productPrice = "Product Price Error";
+    public static final String productMustHavePart = "Product must have at least one associated part";
     public static final String productNotFound = "Product was not found";
     public static final String searchFieldEmpty = "Please enter a name or an ID into the search field";
     public static final String selectPartDelete = "Must select a part to delete";
     public static final String selectPartModify = "Must select a part to modify";
     public static final String selectProductDelete = "Must select a product to delete";
     public static final String selectProductModify = "Must select a product to modify";
-    public static final String stockMax = "Input amount is greater than maximum stock amount";
-    public static final String stockMin = "Input amount is less than minimum stock amount";
+    public static final String stockEmpty = "Inventory Level Empty";
+    public static final String stockSetZero = "Inventory level will be set to 0. Do you accept this change?";
+    public static final String stockMax = "Inventory level is greater than maximum";
+    public static final String stockMin = "Inventory level is less than minimum";
     public static final String switchMaxMin = "Maximum / Minimum amounts are invalid. The values may need to be switched.";
 
     // Strings for the screen Urls
@@ -140,6 +143,29 @@ public class Utility {
         }
     }
 
+    public static void checkIntEmpty(TextField f, inventoryLevel IL) {
+        if (f.getText().trim().isEmpty()) {
+            switch (IL) {
+                case stock :
+                    if(alertBox(alertType.confirmation, stockSetZero, stockEmpty)) f.setText("0");
+                    break;
+                case min :
+                    if(alertBox(alertType.confirmation, minSetZero, minEmpty)) f.setText("0");
+                    break;
+                case max :
+                    if(alertBox(alertType.confirmation, maxSetHundred, maxEmpty)) f.setText("100");
+            }
+        }
+        try {
+            int i = Integer.parseInt(f.getText().trim());
+            checkPos(i);
+            }
+            catch (Exception e) {
+                f.setStyle("-fx-border-color: red");
+                errorQ.add(f);
+        }
+    }
+
     public static void checkDbl(TextField f) {
         double d;
         try {
@@ -199,49 +225,25 @@ public class Utility {
         }
     }
 
-    public static void viewScreen(MouseEvent event, String url) throws IOException {
-        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        Parent scene = FXMLLoader.load(Utility.class.getResource(url));
-        stage.setScene(new Scene(scene));
-        stage.show();
-    }
-
-    public static void cancelButton(MouseEvent event) throws IOException {
-        if(alertBox(alertType.confirmation, cancel, confirmation)) {
-            viewScreen(event, mainScreenFxmlUrl);
+    static void checkProductPrice(double price, TableView<Part> associatedPartTable, TextField prodPriceField) {
+        double partSum = 0;
+        for(Part associatedPart : associatedPartTable.getItems()) partSum += associatedPart.getPrice();
+        if(partSum > price) {
+            prodPriceField.setStyle("-fx-border-color: red");
+            associatedPartTable.setStyle("-fx-border-color: red");
+            alertBox(alertType.error, partsGreaterProduct, productPrice);
+            throw new IllegalArgumentException();
         }
     }
 
-    public static boolean alertBox(alertType type, String contentText, String title) {
-        if(type == alertType.confirmation) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, contentText, ButtonType.CANCEL, ButtonType.YES);
-            alert.setTitle(title);
-            alert.setHeaderText(title);
-            Optional<ButtonType> confirm = alert.showAndWait();
-            return (confirm.isPresent() && confirm.get() == ButtonType.YES);
+    static void checkAssociatedParts(TableView<Part> associatedPartTable) {
+        if(associatedPartTable.getItems().isEmpty()) {
+            associatedPartTable.setStyle("-fx-border-color: red");
+            alertBox(alertType.error, productMustHavePart, noAssociatedParts);
+            throw new IllegalArgumentException("Product has no part");
         }
-        else if(type == alertType.error) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, contentText);
-            alert.setTitle(title);
-            alert.setHeaderText(title);
-            alert.showAndWait();
-            return false;
-        }
-        else if(type == alertType.warning) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, contentText);
-            alert.setTitle(title);
-            alert.setHeaderText(title);
-            alert.showAndWait();
-            return false;
-        }
-        else return false;
     }
-    public static void alertBox(String contentText, StringBuilder errorFields, String title) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, contentText + errorFields.toString());
-        alert.setTitle(title);
-        alert.setHeaderText(title);
-        alert.showAndWait();
-    }
+
     public static void searchPart(TextField partSearchField, TableView<Part> partTable) {
         try {
             checkEmpty(partSearchField.getText().trim());
@@ -319,6 +321,59 @@ public class Utility {
             mainScreenController.stage.setScene(new Scene(scene));
             mainScreenController.stage.show();
         }
+    }
+
+    public static boolean alertBox(alertType type, String contentText, String title) {
+        if(type == alertType.confirmation) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, contentText, ButtonType.CANCEL, ButtonType.YES);
+            alert.setTitle(title);
+            alert.setHeaderText(title);
+            Optional<ButtonType> confirm = alert.showAndWait();
+            return (confirm.isPresent() && confirm.get() == ButtonType.YES);
+        }
+        else if(type == alertType.error) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, contentText);
+            alert.setTitle(title);
+            alert.setHeaderText(title);
+            alert.showAndWait();
+            return false;
+        }
+        else if(type == alertType.warning) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, contentText);
+            alert.setTitle(title);
+            alert.setHeaderText(title);
+            alert.showAndWait();
+            return false;
+        }
+        else return false;
+    }
+
+    public static void alertBox(String contentText, StringBuilder errorFields, String title) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, contentText + errorFields.toString());
+        alert.setTitle(title);
+        alert.setHeaderText(title);
+        alert.showAndWait();
+    }
+
+    public static void viewScreen(MouseEvent event, String url) throws IOException {
+        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        Parent scene = FXMLLoader.load(Utility.class.getResource(url));
+        stage.setScene(new Scene(scene));
+        stage.show();
+    }
+
+    public static void cancelButton(MouseEvent event) throws IOException {
+        if(alertBox(alertType.confirmation, cancel, confirmation)) {
+            viewScreen(event, mainScreenFxmlUrl);
+        }
+    }
+
+    public static void addAssociatedPartButton(TableView<Part> partTable, TableView<Part> associatedPartTable, TableColumn<Part, Integer> partIdCol) {
+        ObservableList<Part> associatedParts = FXCollections.observableArrayList();
+        associatedParts = associatedPartTable.getItems();
+        associatedParts.add(partTable.getSelectionModel().getSelectedItem());
+        associatedPartTable.setItems(associatedParts);
+        associatedPartTable.getSortOrder().add(partIdCol);
     }
 
 }

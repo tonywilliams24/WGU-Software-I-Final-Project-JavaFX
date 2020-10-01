@@ -182,14 +182,35 @@ public class Inventory {
 
     public static Queue<Product> searchAssociatedParts(Part selectedPart) {
         Queue<Product> searchProductQueue = new LinkedList<>();
+        Queue<Product> onlyAssociatedPartQueue = new LinkedList<>();
         searchPartBuilder.setLength(0);
         for (Product product : getAllProducts()) {
             boolean partFound = false;
+            boolean onlyAssociatedPart = false;
             for (Part part : searchPartResult(selectedPart.getId(), product.getAllAssociatedParts())) {
                 if (selectedPart.getId() == part.getId()) {
+                    if(product.getAllAssociatedParts().size()==1)
+                    {
+                        onlyAssociatedPart = true;
+                        continue;
+                    }
+                    else {
+                        onlyAssociatedPart = true;
+                        for (int i = 1; i < product.getAllAssociatedParts().size(); i++) {
+                            if (!product.getAllAssociatedParts().get(i).equals(product.getAllAssociatedParts().get(0))) {
+                                onlyAssociatedPart = false;
+                                break;
+                            }
+                        }
+
+                    }
                     partFound = true;
                     searchProductQueue.add(product);
                 }
+            }
+            if (onlyAssociatedPart) {
+                onlyAssociatedPartQueue.add(product);
+                continue;
             }
             if (partFound) {
                 searchPartBuilder.append("Product ID: ");
@@ -199,7 +220,11 @@ public class Inventory {
                 searchPartBuilder.append(")");
                 searchPartBuilder.append("\n");
             }
+
         }
+        if(!onlyAssociatedPartQueue.isEmpty()) return onlyAssociatedPartQueue;
         return searchProductQueue;
     }
+
+
 }

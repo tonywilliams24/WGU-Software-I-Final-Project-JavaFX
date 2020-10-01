@@ -140,17 +140,17 @@ public class AddProductScreenController implements Initializable {
         // Validation that styles text fields but does not throw error
         // Returns text field to queue for future reference
         checkString(prodFields[0]);
-        checkInt(prodFields[1]);
+        checkIntEmpty(prodFields[1], inventoryLevel.stock);
         checkDbl(prodFields[2]);
-        checkInt(prodFields[3]);
-        checkInt(prodFields[4]);
+        checkIntEmpty(prodFields[3], inventoryLevel.max);
+        checkIntEmpty(prodFields[4], inventoryLevel.min);
 
         // Input validation that will throw error if unsuccessful
         // If no errors, will create new prod based on the prod type selected
         // Will send back to main screen after prod is created
         try {
             int id = incProductID();
-            String name = prodNameField.getText().trim();
+            String name = prodFields[0].getText().trim();
             checkEmpty(name);
             int stock = Integer.parseInt(prodFields[1].getText().trim());
             checkPos(stock);
@@ -160,8 +160,10 @@ public class AddProductScreenController implements Initializable {
             checkPos(min);
             int max = Integer.parseInt(prodFields[3].getText().trim());
             checkPos(max);
+            checkProductPrice(price, associatedPartTable, prodPriceField);
             checkMaxMin(prodFields[3], prodFields[4], Integer.parseInt(prodFields[1].getText().trim()));
             checkStock(prodFields[1], min, max);
+            checkAssociatedParts(associatedPartTable);
             addProduct(new Product(id, name, price, stock, min, max));
             for(Part associatedPart : associatedPartTable.getItems()) lookupProduct(id).addAssociatedPart(associatedPart);
             viewScreen(event, mainScreenFxmlUrl);

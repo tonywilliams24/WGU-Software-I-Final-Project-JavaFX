@@ -109,10 +109,10 @@ public class ModifyPartScreenController {
         // Validation that styles text fields but does not throw error
         // Returns text field to queue for future reference
         checkString(partFields[0]);
-        checkInt(partFields[1]);
+        checkIntEmpty(partFields[1], inventoryLevel.stock);
         checkDbl(partFields[2]);
-        checkInt(partFields[3]);
-        checkInt(partFields[4]);
+        checkIntEmpty(partFields[3], inventoryLevel.max);
+        checkIntEmpty(partFields[4], inventoryLevel.min);
         if (partInHouseRadio.isSelected()) checkInt(partFields[5]);
         else checkString(partFields[5]);
 
