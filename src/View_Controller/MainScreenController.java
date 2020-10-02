@@ -10,6 +10,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.fxml.Initializable;
 import javafx.stage.Stage;
+
+import javax.security.auth.DestroyFailedException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Queue;
@@ -151,12 +153,13 @@ public class MainScreenController implements Initializable {
             alertBox(alertType.error, selectPartDelete, invalidSelection);
         }
         else {
-            Queue<Product> deleteQueue = searchAssociatedParts(partTable.getSelectionModel().getSelectedItem());
-            if (alertBox(alertType.confirmation, deletePartMain.concat(getSearchPartBuilder().toString()), confirmation)) {
-                System.out.println(getSearchPartBuilder());
-                deletePart(partTable.getSelectionModel().getSelectedItem(), deleteQueue);
-                partTable.setItems(partTable.getItems());
+            if(searchAssociatedParts(partTable.getSelectionModel().getSelectedItem())) {
+                if (alertBox(alertType.confirmation, deletePartMain.concat(getSearchPartBuilder().toString()), confirmation)) {
+                    deletePart(partTable.getSelectionModel().getSelectedItem(), getSearchProductQueue());
+                    partTable.setItems(partTable.getItems());
+                }
             }
+            else alertBox(alertType.error, onlyAssociatedPartError + getOnlyAssociatedPartBuilder(), invalidSelection);
         }
     }
 }

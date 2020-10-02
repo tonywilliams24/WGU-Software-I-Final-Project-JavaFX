@@ -22,6 +22,8 @@ import static Model.Inventory.*;
 
 public class Utility {
 
+    public static final String onlyAssociatedPartError = "Cannot delete part as it is the only associated part for the following products:\n";
+
     public enum alertType {confirmation, error, warning};
     public enum inventoryLevel {stock, min, max};
 

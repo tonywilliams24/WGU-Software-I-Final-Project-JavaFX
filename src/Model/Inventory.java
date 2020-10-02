@@ -3,7 +3,6 @@ package Model;
 import View_Controller.Utility;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -11,11 +10,17 @@ import static View_Controller.Utility.*;
 
 public class Inventory {
 
+    // Required Observable Lists per UML Diagram:
     private static ObservableList<Part> allParts = FXCollections.observableArrayList();
     private static ObservableList<Product> allProducts = FXCollections.observableArrayList();
+
+
     private ObservableList<Part> allSearchedParts = FXCollections.observableArrayList();
     private static ObservableList<Product> allSearchedProducts = FXCollections.observableArrayList();
     private static StringBuilder searchPartBuilder = new StringBuilder();
+    private static StringBuilder onlyAssociatedPartBuilder = new StringBuilder();
+    private static Queue<Product> searchProductQueue = new LinkedList<>();
+    private static Queue<Product> onlyAssociatedPartQueue = new LinkedList<>();
     private static int partID = 0;
     private static int productID = 0;
 
@@ -134,8 +139,20 @@ public class Inventory {
         return allSearchedProducts;
     }
 
+    public static Queue<Product> getOnlyAssociatedPartQueue() {
+        return onlyAssociatedPartQueue;
+    }
+
+    public static Queue<Product> getSearchProductQueue() {
+        return searchProductQueue;
+    }
+
     public static StringBuilder getSearchPartBuilder() {
         return searchPartBuilder;
+    }
+
+    public static StringBuilder getOnlyAssociatedPartBuilder() {
+        return onlyAssociatedPartBuilder;
     }
 
     public static ObservableList<Part> searchPartResult(int search, ObservableList<Part> partObservableList) {
@@ -180,37 +197,26 @@ public class Inventory {
         }
     }
 
-    public static Queue<Product> searchAssociatedParts(Part selectedPart) {
-        Queue<Product> searchProductQueue = new LinkedList<>();
-        Queue<Product> onlyAssociatedPartQueue = new LinkedList<>();
+    public static boolean searchAssociatedParts(Part selectedPart) {
         searchPartBuilder.setLength(0);
+        onlyAssociatedPartBuilder.setLength(0);
+        onlyAssociatedPartQueue.clear();
+        searchProductQueue.clear();
         for (Product product : getAllProducts()) {
             boolean partFound = false;
-            boolean onlyAssociatedPart = false;
+            boolean onlyAssociatedPart = true;
             for (Part part : searchPartResult(selectedPart.getId(), product.getAllAssociatedParts())) {
-                if (selectedPart.getId() == part.getId()) {
-                    if(product.getAllAssociatedParts().size()==1)
-                    {
-                        onlyAssociatedPart = true;
-                        continue;
-                    }
-                    else {
-                        onlyAssociatedPart = true;
-                        for (int i = 1; i < product.getAllAssociatedParts().size(); i++) {
-                            if (!product.getAllAssociatedParts().get(i).equals(product.getAllAssociatedParts().get(0))) {
-                                onlyAssociatedPart = false;
-                                break;
-                            }
-                        }
-
-                    }
-                    partFound = true;
-                    searchProductQueue.add(product);
+                partFound = true;
+                searchProductQueue.add(product);
+            }
+            for (Part associatedPart : product.getAllAssociatedParts()) {
+                if (!(associatedPart.getId() == selectedPart.getId())) {
+                    onlyAssociatedPart = false;
                 }
             }
             if (onlyAssociatedPart) {
                 onlyAssociatedPartQueue.add(product);
-                continue;
+                onlyAssociatedPartBuilder.append("Product ID: " + product.getId() + "  (" + product.getName() + ")\n");
             }
             if (partFound) {
                 searchPartBuilder.append("Product ID: ");
@@ -220,10 +226,14 @@ public class Inventory {
                 searchPartBuilder.append(")");
                 searchPartBuilder.append("\n");
             }
-
         }
-        if(!onlyAssociatedPartQueue.isEmpty()) return onlyAssociatedPartQueue;
-        return searchProductQueue;
+        if(!onlyAssociatedPartQueue.isEmpty()) {
+            while (!onlyAssociatedPartQueue.isEmpty()) {
+                System.out.println("Product ID: " + onlyAssociatedPartQueue.poll().getId());
+            }
+            return false;
+        }
+        return true;
     }
 
 
