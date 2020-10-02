@@ -14,7 +14,6 @@ public class Inventory {
     private static ObservableList<Part> allParts = FXCollections.observableArrayList();
     private static ObservableList<Product> allProducts = FXCollections.observableArrayList();
 
-
     private ObservableList<Part> allSearchedParts = FXCollections.observableArrayList();
     private static ObservableList<Product> allSearchedProducts = FXCollections.observableArrayList();
     private static StringBuilder searchPartBuilder = new StringBuilder();
