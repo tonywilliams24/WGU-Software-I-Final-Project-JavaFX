@@ -14,31 +14,18 @@ public class Inventory {
     private static ObservableList<Part> allParts = FXCollections.observableArrayList();
     private static ObservableList<Product> allProducts = FXCollections.observableArrayList();
 
-    private ObservableList<Part> allSearchedParts = FXCollections.observableArrayList();
+    // Added in to help search for Parts / Products
     private static ObservableList<Product> allSearchedProducts = FXCollections.observableArrayList();
     private static StringBuilder searchPartBuilder = new StringBuilder();
     private static StringBuilder onlyAssociatedPartBuilder = new StringBuilder();
     private static Queue<Product> searchProductQueue = new LinkedList<>();
     private static Queue<Product> onlyAssociatedPartQueue = new LinkedList<>();
+
+    // Variables that increment when a new Part / Product is created. Used to create unique IDs.
     private static int partID = 0;
     private static int productID = 0;
 
-    public static int getPartID() {
-        return partID;
-    }
-
-    public static int incPartID() {
-        return ++partID;
-    }
-
-    public static int getProductID() {
-        return productID;
-    }
-
-    public static int incProductID() {
-        return ++productID;
-    }
-
+    // Required Getters, Setters, and other Methods per UML Diagram
     public static void addPart(Part newPart) {
         allParts.add(newPart);
     }
@@ -47,10 +34,10 @@ public class Inventory {
         allProducts.add(newProduct);
     }
 
-    public static Part lookupPart(int partID) {
+    public static Part lookupPart(int partId) {
         if (!allParts.isEmpty()) {
             for (int i = 0; i < allParts.size(); i++) {
-                if (allParts.get(i).getId() == partID) return allParts.get(i);
+                if (allParts.get(i).getId() == partId) return allParts.get(i);
             }
         }
         return null;
@@ -83,23 +70,23 @@ public class Inventory {
         return null;
     }
 
-    public static void updatePart(int partId, Part part){
-        int index = -1;
+    public static void updatePart(int index, Part selectedPart){
+        int i = -1;
         for (Part p : getAllParts()) {
-            index++;
-            if(p.getId() == partId) {
-                getAllParts().set(index, part);
+            i++;
+            if(p.getId() == index) {
+                getAllParts().set(i, selectedPart);
                 return;
             }
         }
     }
 
-    public static void updateProduct(int productId, Product product){
-        int index = -1;
+    public static void updateProduct(int index, Product newProduct){
+        int i = -1;
         for (Product p : getAllProducts()) {
-            index++;
-            if(p.getId() == productId) {
-                getAllProducts().set(index, product);
+            i++;
+            if(p.getId() == index) {
+                getAllProducts().set(i, newProduct);
                 return;
             }
         }
@@ -107,15 +94,6 @@ public class Inventory {
 
     public static boolean deletePart(Part selectedPart) {
         return allParts.remove(selectedPart);
-    }
-
-    public static boolean deletePart(Part selectedPart, Queue<Product> productQueue) {
-        for (Product product : productQueue) product.deleteAssociatedPart(selectedPart);
-        return allParts.remove(selectedPart);
-    }
-
-    public static boolean deletePart(Part selectedPart, ObservableList<Part> partObservableList) {
-        return partObservableList.remove(selectedPart);
     }
 
     public static boolean deleteProduct(Product selectedProduct) {
@@ -130,8 +108,32 @@ public class Inventory {
         return allProducts;
     }
 
-    public ObservableList<Part> getAllSearchedParts() {
-        return allSearchedParts;
+    // Overloaded method that deletes part from All Parts list and from all products in the queue
+    public static boolean deletePart(Part selectedPart, Queue<Product> productQueue) {
+        for (Product product : productQueue) product.deleteAssociatedPart(selectedPart);
+        return allParts.remove(selectedPart);
+    }
+
+    // Overloaded method that deletes part from a specified list
+    public static boolean deletePart(Part selectedPart, ObservableList<Part> partObservableList) {
+        return partObservableList.remove(selectedPart);
+    }
+
+    // Additional Getters, Setters, and other methods
+    public static int getPartID() {
+        return partID;
+    }
+
+    public static int incPartID() {
+        return ++partID;
+    }
+
+    public static int getProductID() {
+        return productID;
+    }
+
+    public static int incProductID() {
+        return ++productID;
     }
 
     public static ObservableList<Product> getAllSearchedProducts() {
@@ -154,6 +156,7 @@ public class Inventory {
         return onlyAssociatedPartBuilder;
     }
 
+    // Searches a given list for a Part ID and returns all matches
     public static ObservableList<Part> searchPartResult(int search, ObservableList<Part> partObservableList) {
         ObservableList<Part> tempPartsList = FXCollections.observableArrayList();
         for (Part part : partObservableList) {
@@ -164,6 +167,8 @@ public class Inventory {
         return tempPartsList;
     }
 
+    // Searches the All Parts list for a Part ID or Part Name and returns all matches
+    // Will show error message if no parts are found and return all parts instead
     public static ObservableList<Part> searchPartResult(String search) {
         ObservableList<Part> tempPartsList = FXCollections.observableArrayList();
         search = search.trim();
@@ -180,6 +185,7 @@ public class Inventory {
         }
     }
 
+    // Searches the All Products list for a Product ID or Product Name and returns all matches
     public static ObservableList<Product> searchProductResult(String search) {
         ObservableList<Product> tempProductsList = FXCollections.observableArrayList();
         search = search.trim();
@@ -196,6 +202,9 @@ public class Inventory {
         }
     }
 
+    // Searches to find if a given part is also an associated part to any other product
+    // Returns false if a part is the only associated part to a given product otherwise returns true
+    // This is so the delete function knows if it should go through with deleting the part or not
     public static boolean searchAssociatedParts(Part selectedPart) {
         searchPartBuilder.setLength(0);
         onlyAssociatedPartBuilder.setLength(0);

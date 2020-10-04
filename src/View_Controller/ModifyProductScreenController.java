@@ -5,7 +5,6 @@ import Model.Product;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
@@ -137,11 +136,7 @@ public class ModifyProductScreenController {
 
         // Validation that styles text fields but does not throw error
         // Returns text field to queue for future reference
-        checkString(prodFields[0]);
-        checkIntEmpty(prodFields[1], inventoryLevel.stock);
-        checkDbl(prodFields[2]);
-        checkIntEmpty(prodFields[3], inventoryLevel.max);
-        checkIntEmpty(prodFields[4], inventoryLevel.min);
+        validateInput(prodFields);
 
         // Input validation that will throw error if unsuccessful
         // If no errors, will create new prod based on the prod type selected
@@ -172,7 +167,7 @@ public class ModifyProductScreenController {
 
                 errorBuilder.append(errorMap.get(errorQ.poll().getId()) + "\n");
             }
-            alertBox(errorFields, errorBuilder, fieldInput);
+            alertBox(alertType.error, errorFields.concat(errorBuilder.toString()), fieldInput);
         }
 
         // Catches errors that have already generated an alert box
@@ -193,24 +188,10 @@ public class ModifyProductScreenController {
     public void sendProduct(Product product) {
 
         // Sets text fields and table based on prod selected from prior screen
-        prodIdField.setText(String.valueOf(product.getId()));
-        prodNameField.setText((product.getName()));
-        prodInvField.setText(String.valueOf(product.getStock()));
-        prodPriceField.setText(String.valueOf(product.getPrice()));
-        prodMaxField.setText((String.valueOf(product.getMax())));
-        prodMinField.setText((String.valueOf(product.getMin())));
+        setFields(product, prodIdField, prodNameField, prodInvField, prodPriceField, prodMaxField, prodMinField);
 
-        partTable.setItems(getAllParts());
-        partIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-        partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-        partInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        partPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
-
-        associatedPartTable.setItems(product.getAllAssociatedParts());
-        associatedPartIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-        associatedPartNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-        associatedPartInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        associatedPartPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
-        associatedPartTable.getSortOrder().add(associatedPartIdCol);
+        setAllPartsTable(partTable, partIdCol, partNameCol, partInvCol, partPriceCol, SelectionMode.MULTIPLE);
+        setAssociatedPartTable(associatedPartIdCol, associatedPartInvCol, associatedPartNameCol, associatedPartPriceCol, associatedPartTable, product);
     }
+
 }

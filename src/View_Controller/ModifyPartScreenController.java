@@ -65,7 +65,7 @@ public class ModifyPartScreenController {
     private Label partCompanyLabel;
 
     @FXML
-    private TextField partIDField;
+    private TextField partIdField;
 
     @FXML
     private TextField partNameField;
@@ -108,18 +108,14 @@ public class ModifyPartScreenController {
 
         // Validation that styles text fields but does not throw error
         // Returns text field to queue for future reference
-        checkString(partFields[0]);
-        checkIntEmpty(partFields[1], inventoryLevel.stock);
-        checkDbl(partFields[2]);
-        checkIntEmpty(partFields[3], inventoryLevel.max);
-        checkIntEmpty(partFields[4], inventoryLevel.min);
+        validateInput(partFields);
         if (partInHouseRadio.isSelected()) checkInt(partFields[5]);
         else checkString(partFields[5]);
 
         // Input validation that will throw error if unsuccessful
         // If no errors, will create new Part based on the Part type selected
         // Will send back to main screen after part is created
-        int id = Integer.parseInt(partIDField.getText());
+        int id = Integer.parseInt(partIdField.getText());
         try {
             String name = partNameField.getText().trim();
             checkEmpty(name);
@@ -154,7 +150,7 @@ public class ModifyPartScreenController {
 
                 errorBuilder.append(errorMap.get(errorQ.poll().getId()) + "\n");
             }
-            alertBox(errorFields, errorBuilder, fieldInput);
+            alertBox(alertType.error, errorFields.concat(errorBuilder.toString()), fieldInput);
         }
 
         // Catches errors that have already generated an alert box
@@ -166,16 +162,10 @@ public class ModifyPartScreenController {
     public void sendPart(Part part) {
 
         // Sets text fields based on part selected from prior screen
-        partIDField.setText(String.valueOf(part.getId()));
-        partNameField.setText((part.getName()));
-        partInvField.setText(String.valueOf(part.getStock()));
-        partPriceField.setText(String.valueOf(part.getPrice()));
-        partMaxField.setText((String.valueOf(part.getMax())));
-        partMinField.setText((String.valueOf(part.getMin())));
+        setFields(part, partIdField, partNameField, partInvField, partPriceField, partMaxField, partMinField);
 
         // Checks to see if the part is InHouse or not, and sets the Label and Field accordingly
         // Also creates a variable to remember the field in case it needs to be recalled
-
         if(part instanceof InHouse) {
             partInHouseRadio.setSelected(true);
             partUniqueLabel.setText("Machine ID");

@@ -70,7 +70,7 @@
                   <Label fx:id="partPriceLabel" text="Price/Cost" GridPane.rowIndex="3" />
                   <Label fx:id="partMaxLabel" text="Max" GridPane.rowIndex="4" />
                   <Label fx:id="partUniqueLabel" text="Company Name" GridPane.rowIndex="5" />
-                  <TextField fx:id="partIDField" disable="true" editable="false" maxWidth="150.0" prefHeight="35.0" prefWidth="75.0" GridPane.columnIndex="1" />
+                  <TextField fx:id="partIdField" disable="true" editable="false" maxWidth="150.0" prefHeight="35.0" prefWidth="75.0" GridPane.columnIndex="1" />
                   <TextField fx:id="partNameField" maxWidth="150.0" prefHeight="35.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <TextField fx:id="partInvField" maxWidth="150.0" prefHeight="35.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="partPriceField" maxWidth="150.0" prefHeight="35.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />

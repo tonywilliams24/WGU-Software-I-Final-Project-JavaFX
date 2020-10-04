@@ -100,11 +100,7 @@ public class AddPartScreenController {
 
         // Validation that styles text fields but does not throw error
         // Returns text field to queue for future reference
-        checkString(partFields[0]);
-        checkIntEmpty(partFields[1], inventoryLevel.stock);
-        checkDbl(partFields[2]);
-        checkIntEmpty(partFields[3], inventoryLevel.max);
-        checkIntEmpty(partFields[4], inventoryLevel.min);
+        validateInput(partFields);
         if (partInHouseRadio.isSelected()) checkInt(partFields[5]);
         else checkString(partFields[5]);
 
@@ -144,10 +140,9 @@ public class AddPartScreenController {
             if (partInHouseRadio.isSelected()) buildErrorMap("InHouse");
             else buildErrorMap("Outsourced");
             while(!errorQ.isEmpty()) {
-
                 errorBuilder.append(errorMap.get(errorQ.poll().getId()) + "\n");
             }
-            alertBox(errorFields, errorBuilder, fieldInput);
+            alertBox(alertType.error, errorFields.concat(errorBuilder.toString()), fieldInput);
         }
 
         // Catches errors that have already generated an alert box
