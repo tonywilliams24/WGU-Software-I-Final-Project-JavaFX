@@ -104,7 +104,7 @@ public class MainScreenController implements Initializable {
 
     @FXML
     void prodExitHandler(MouseEvent event) {
-        if (alertBox(alertType.confirmation, exit, confirmation)) exitProgram(event);
+        exitProgram(event);
     }
 
     // Sends user to the Modify Part screen with the information for the selected part pre-populated when

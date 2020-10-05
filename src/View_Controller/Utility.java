@@ -26,7 +26,7 @@ public class Utility {
     // Strings for the error messages
     public static final String cancel = "Cancel and return to the Main Screen without making changes?";
     public static final String confirmation = "Confirmation Needed";
-    public static final String deletePartMain = "Permanently delete the selected part? This will also remove it as an associated part from the following products: \n";
+    public static final String deletePartMain = "Permanently delete the selected part? This will also remove it as an associated part from the following products: \n\n";
     public static final String deletePartCancel = "Permanently delete the selected part? The cancel button will not undo this action.";
     public static final String deleteProduct = "Permanently delete the product?";
     public static final String empty = "Empty Search";
@@ -43,7 +43,7 @@ public class Utility {
     public static final String minSetZero = "Minimum Inventory level will be set to 0. Do you accept this change?";
     public static final String notFound = "Not Found";
     public static final String noAssociatedParts = "No Associated Parts Found";
-    public static final String onlyAssociatedPartError = "Cannot delete part as it is the only associated part for the following products:\n";
+    public static final String onlyAssociatedPartError = "Cannot delete part as it is the only associated part for the following products:\n\n";
     public static final String partsGreaterProduct = "Cost of the product is less than the cost of the parts";
     public static final String partNotFound = "Part was not found";
     public static final String productPrice = "Product Price Error";
@@ -60,13 +60,15 @@ public class Utility {
     public static final String stockMin = "Inventory level is less than minimum";
     public static final String switchMaxMin = "Maximum / Minimum amounts are invalid. The values may need to be switched.";
 
-    // Strings for the screen Urls
+    // Strings for various Urls
     public static final String mainScreenFxmlUrl = "/View_Controller/MainScreen.fxml";
     public static final String addPartScreenFxmlUrl = "/View_Controller/AddPartScreen.fxml";
     public static final String addProductScreenFxmlUrl = "/View_Controller/AddProductScreen.fxml";
     public static final String ModifyPartScreenFxmlUrl = "/View_Controller/ModifyPartScreen.fxml";
     public static final String ModifyProductScreenFxmlUrl = "/View_Controller/ModifyProductScreen.fxml";
+    public static final String cssUrl = "/View_Controller/CSS.css";
 
+    // Methods that validates all input fields and changes the style of the text field if error is found but does not throw an error
     public static void validateInput(TextField[] partFields) {
         checkString(partFields[0]);
         checkIntEmpty(partFields[1], inventoryLevel.stock);
@@ -153,7 +155,6 @@ public class Utility {
         } catch (Exception e) {
             f.setStyle("-fx-border-color: red");
             errorQ.add(f);
-            System.out.println(f.getId());
         }
     }
 
@@ -345,16 +346,12 @@ public class Utility {
         stage.show();
     }
 
-    // Method to close the program when the exit button (Window) is selected from the main window
-    public static void exitProgram(WindowEvent event) throws ClassCastException {
-        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        stage.close();
-    }
-
-    // Overloaded method to close the program when the "Exit Button" on the main screen is clicked
+    // Method to close the program when the "Exit Button" on the main screen is clicked
     public static void exitProgram(MouseEvent event) {
-        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        stage.close();
+        if (alertBox(alertType.confirmation, exit, confirmation)) {
+            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            stage.close();
+        }
     }
 
     // Method for cancel button, will prompt a confirmation message before sending user to main screen

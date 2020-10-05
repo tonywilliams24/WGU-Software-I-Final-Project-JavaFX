@@ -171,9 +171,9 @@ public class Inventory {
     // Will show error message if no parts are found and return all parts instead
     public static ObservableList<Part> searchPartResult(String search) {
         ObservableList<Part> tempPartsList = FXCollections.observableArrayList();
-        search = search.trim();
+        search = search.trim().toLowerCase();
         for (Part part : getAllParts()) {
-            if (part.getName().contains(search) || Integer.toString(part.getId()).contains(search)) {
+            if (part.getName().toLowerCase().contains(search) || Integer.toString(part.getId()).contains(search)) {
                 tempPartsList.add(part);
             }
         }
@@ -188,9 +188,9 @@ public class Inventory {
     // Searches the All Products list for a Product ID or Product Name and returns all matches
     public static ObservableList<Product> searchProductResult(String search) {
         ObservableList<Product> tempProductsList = FXCollections.observableArrayList();
-        search = search.trim();
+        search = search.trim().toLowerCase();
         for (Product product : getAllProducts()) {
-            if (product.getName().contains(search) || Integer.toString(product.getId()).contains(search)) {
+            if (product.getName().toLowerCase().contains(search) || Integer.toString(product.getId()).contains(search)) {
                 tempProductsList.add(product);
             }
         }
@@ -224,23 +224,13 @@ public class Inventory {
             }
             if (onlyAssociatedPart) {
                 onlyAssociatedPartQueue.add(product);
-                onlyAssociatedPartBuilder.append("Product ID: " + product.getId() + "  (" + product.getName() + ")\n");
+                onlyAssociatedPartBuilder.append("Product ID " + product.getId() + "  -  " + product.getName() + "\n");
             }
             if (partFound) {
-                searchPartBuilder.append("Product ID: ");
-                searchPartBuilder.append(product.getId());
-                searchPartBuilder.append("  (");
-                searchPartBuilder.append(product.getName());
-                searchPartBuilder.append(")");
-                searchPartBuilder.append("\n");
+                searchPartBuilder.append("Product ID " + product.getId() + "  -  " + product.getName() + "\n");
             }
         }
-        if(!onlyAssociatedPartQueue.isEmpty()) {
-            while (!onlyAssociatedPartQueue.isEmpty()) {
-                System.out.println("Product ID: " + onlyAssociatedPartQueue.poll().getId());
-            }
-            return false;
-        }
+        if(!onlyAssociatedPartQueue.isEmpty()) return false;
         return true;
     }
 

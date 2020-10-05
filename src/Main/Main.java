@@ -16,29 +16,25 @@ import static View_Controller.Utility.*;
 
 public class Main extends Application {
 
-    // Launches the Main Screen and handles close requests
+    // Launches the Main Screen and handles close requests from the "X" button (Lambda expression used)
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/View_Controller/MainScreen.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource(mainScreenFxmlUrl));
         Scene scene = new Scene(root, 1200, 500);
-        scene.getStylesheets().add("/View_Controller/CSS.css");
+        scene.getStylesheets().add(cssUrl);
         primaryStage.setTitle("Inventory Management System");
         primaryStage.setScene(scene);
         primaryStage.show();
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
+        primaryStage.setOnCloseRequest(e -> {
                 if (!alertBox(alertType.confirmation, exit, confirmation)) {
-                    try{ exitProgram(event); }
-                    catch(ClassCastException e) {}
+                    e.consume();
                 }
-            }
         });
     }
 
 
     public static void main(String[] args) {
-
+        // Sample Parts and Products
         Product prodTest1 = new Product(incProductID(), "Plane", 100000.0, 2, 1, 3);
         Product prodTest2 = new Product(incProductID(), "Train", 50000.0, 4, 1, 20);
         Product prodTest3 = new Product(incProductID(), "Autonomous Vehicle", 10000.0, 50, 40, 100);
