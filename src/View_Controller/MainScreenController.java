@@ -68,6 +68,9 @@ public class MainScreenController implements Initializable {
     private Button prodSearchButton;
 
     @FXML
+    private Button prodExitButton;
+
+    @FXML
     private TextField prodSearchField;
 
     @FXML
@@ -96,6 +99,12 @@ public class MainScreenController implements Initializable {
     @FXML
     void partDeleteHandler(MouseEvent event) {
         deleteSelectedPart(partTable);
+    }
+
+
+    @FXML
+    void prodExitHandler(MouseEvent event) {
+        if (alertBox(alertType.confirmation, exit, confirmation)) exitProgram(event);
     }
 
     // Sends user to the Modify Part screen with the information for the selected part pre-populated when

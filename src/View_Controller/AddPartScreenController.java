@@ -7,9 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-
 import java.io.IOException;
-
 import static Model.Inventory.*;
 import static View_Controller.Utility.*;
 
@@ -76,12 +74,14 @@ public class AddPartScreenController {
     private TextField partUniqueField;
 
     // Cancel Button Handler
+    // Sends user back to the main screen, but confirms they want to first
     @FXML
     void partCancelHandler(MouseEvent event) throws IOException {
         cancelButton(event);
     }
 
     // Save Button Handler
+    // Validates all text fields, will warn if error is found, otherwise will create a part and return user to main screen
     @FXML
     void partSaveHandler(MouseEvent event) throws IOException {
 
@@ -100,9 +100,7 @@ public class AddPartScreenController {
 
         // Validation that styles text fields but does not throw error
         // Returns text field to queue for future reference
-        validateInput(partFields);
-        if (partInHouseRadio.isSelected()) checkInt(partFields[5]);
-        else checkString(partFields[5]);
+        validateInput(partFields, partInHouseRadio);
 
         // Input validation that will throw error if unsuccessful
         // If no errors, will create new Part based on the Part type selected
@@ -151,6 +149,7 @@ public class AddPartScreenController {
     }
 
     // Radio Button Handlers
+    // Changes the text for the Unique label and field based on the radio button selected
     @FXML
     void partInHouseRadioHandler(ActionEvent event) {
             partUniqueLabel.setText("Machine ID");

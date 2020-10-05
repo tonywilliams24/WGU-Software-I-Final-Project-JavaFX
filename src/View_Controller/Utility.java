@@ -12,12 +12,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
-
 import static Model.Inventory.*;
 
 public class Utility {
@@ -29,6 +30,7 @@ public class Utility {
     public static final String deletePartCancel = "Permanently delete the selected part? The cancel button will not undo this action.";
     public static final String deleteProduct = "Permanently delete the product?";
     public static final String empty = "Empty Search";
+    public static final String exit = "Are you sure you want to exit the program?";
     public static final String errorFields = "Error(s) found in the following field(s): \n";
     public static final String fieldInput = "Text Field Input Error";
     public static final String invalidMaxMin = "Maximum / Minimum amounts are invalid.";
@@ -73,7 +75,7 @@ public class Utility {
         checkIntEmpty(partFields[4], inventoryLevel.min);
     }
 
-    public static void validateInput(TextField[] partFields, CheckBox partInHouseRadio) {
+    public static void validateInput(TextField[] partFields, RadioButton partInHouseRadio) {
         checkString(partFields[0]);
         checkIntEmpty(partFields[1], inventoryLevel.stock);
         checkDbl(partFields[2]);
@@ -343,6 +345,18 @@ public class Utility {
         stage.show();
     }
 
+    // Method to close the program when the exit button (Window) is selected from the main window
+    public static void exitProgram(WindowEvent event) throws ClassCastException {
+        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        stage.close();
+    }
+
+    // Overloaded method to close the program when the "Exit Button" on the main screen is clicked
+    public static void exitProgram(MouseEvent event) {
+        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+        stage.close();
+    }
+
     // Method for cancel button, will prompt a confirmation message before sending user to main screen
     public static void cancelButton(MouseEvent event) throws IOException {
         if (alertBox(alertType.confirmation, cancel, confirmation)) {
@@ -395,6 +409,7 @@ public class Utility {
     // Method to populate the All Products table
     public static void setAllProductsTable(TableView<Product> prodTable, TableColumn<Product, Integer> prodIdCol, TableColumn<Product, String> prodNameCol, TableColumn<Product, Integer> prodInvCol, TableColumn<Product, Integer> prodPriceCol) {
         prodTable.setItems(getAllProducts());
+        prodTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         prodIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         prodNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         prodInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
@@ -404,6 +419,7 @@ public class Utility {
     // Method to populate the All Parts table
     public static void setAllPartsTable(TableView<Part> partTable, TableColumn<Part, Integer> partIdCol, TableColumn<Part, String> partNameCol, TableColumn<Part, Integer> partInvCol, TableColumn<Part, Double> partPriceCol) {
         partTable.setItems(getAllParts());
+        partTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         partIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         partInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
@@ -413,6 +429,7 @@ public class Utility {
     // Overloaded to add parameter that changes the selection mode
     public static void setAllPartsTable(TableView<Part> partTable, TableColumn<Part, Integer> partIdCol, TableColumn<Part, String> partNameCol, TableColumn<Part, Integer> partInvCol, TableColumn<Part, Double> partPriceCol, SelectionMode mode) {
         partTable.setItems(getAllParts());
+        partTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         partTable.getSelectionModel().setSelectionMode(mode);
         partIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -422,21 +439,23 @@ public class Utility {
 
     // Method that sets an empty Associated Parts table
     public static void setAssociatedPartTable(TableColumn<Part, Integer> associatedPartIdCol, TableColumn<Part, Integer> associatedPartInvCol, TableColumn<Part, String> associatedPartNameCol, TableColumn<Part, Double> associatedPartPriceCol, TableView<Part> associatedPartTable) {
+        associatedPartTable.getSortOrder().add(associatedPartIdCol);
+        associatedPartTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         associatedPartIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         associatedPartNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         associatedPartInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
         associatedPartPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
-        associatedPartTable.getSortOrder().add(associatedPartIdCol);
     }
 
     // Overloaded method that set an Associated Parts table, populated with the Associated Parts of a specific Product
     public static void setAssociatedPartTable(TableColumn<Part, Integer> associatedPartIdCol, TableColumn<Part, Integer> associatedPartInvCol, TableColumn<Part, String> associatedPartNameCol, TableColumn<Part, Double> associatedPartPriceCol, TableView<Part> associatedPartTable, Product product) {
         associatedPartTable.setItems(product.getAllAssociatedParts());
+        associatedPartTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        associatedPartTable.getSortOrder().add(associatedPartIdCol);
         associatedPartIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         associatedPartNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         associatedPartInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
         associatedPartPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
-        associatedPartTable.getSortOrder().add(associatedPartIdCol);
     }
 
     // Method to set text fields based on a specified product

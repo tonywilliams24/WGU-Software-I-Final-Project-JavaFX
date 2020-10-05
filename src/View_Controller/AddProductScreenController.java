@@ -1,5 +1,3 @@
-// PLEASE SEE ADD PART SCREEN CONTROLLER FOR MORE COMPLETE IMPLEMENTATION
-
 package View_Controller;
 
 import Model.*;
@@ -8,11 +6,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
 import static Model.Inventory.*;
 import static View_Controller.Utility.*;
 
@@ -111,16 +107,19 @@ public class AddProductScreenController implements Initializable {
     @FXML
     private TableColumn<Part, Double> associatedPartPriceCol;
 
+    //
     @FXML
     void partAddHandler(MouseEvent event) {
         addAssociatedPartButton(partTable, associatedPartTable, partIdCol);
     }
 
+    // Sends user back to the main screen, but confirms they want to first
     @FXML
     void prodCancelHandler(MouseEvent event) throws IOException {
         cancelButton(event);
     }
 
+    // Validates all text fields, will warn if error is found, otherwise will create a part and return user to main screen
     @FXML
     void prodSaveHandler(MouseEvent event) {
 

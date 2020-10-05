@@ -7,9 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-
 import java.io.IOException;
-
 import static Model.Inventory.*;
 import static Model.Inventory.lookupProduct;
 import static View_Controller.Utility.*;
@@ -114,11 +112,13 @@ public class ModifyProductScreenController {
         addAssociatedPartButton(partTable, associatedPartTable, partIdCol);
     }
 
+    // Sends user back to the main screen, but confirms they want to first
     @FXML
     void prodCancelHandler(MouseEvent event) throws IOException {
         cancelButton(event);
     }
 
+    // Validates all text fields, will warn if error is found, otherwise will create a part and return user to main screen
     @FXML
     void prodSaveHandler(MouseEvent event) {
 

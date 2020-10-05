@@ -1,25 +1,20 @@
 package View_Controller;
 
 import Model.InHouse;
-import Model.Inventory;
 import Model.Outsourced;
 import Model.Part;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
-
 import java.io.IOException;
 
+import static Model.Inventory.updatePart;
 import static View_Controller.Utility.*;
 
 public class ModifyPartScreenController {
 
-    Stage stage;
-    Parent scene;
     String[] unique;
 
     @FXML
@@ -85,11 +80,13 @@ public class ModifyPartScreenController {
     @FXML
     private Button partCancelButton;
 
+    // Sends user back to the main screen, but confirms they want to first
     @FXML
     void partCancelHandler(MouseEvent event) throws IOException {
         cancelButton(event);
     }
 
+    // Validates all text fields, will warn if error is found, otherwise will create a part and return user to main screen
     @FXML
     void partSaveHandler(MouseEvent event) throws IOException {
 
@@ -108,9 +105,7 @@ public class ModifyPartScreenController {
 
         // Validation that styles text fields but does not throw error
         // Returns text field to queue for future reference
-        validateInput(partFields);
-        if (partInHouseRadio.isSelected()) checkInt(partFields[5]);
-        else checkString(partFields[5]);
+        validateInput(partFields, partInHouseRadio);
 
         // Input validation that will throw error if unsuccessful
         // If no errors, will create new Part based on the Part type selected
@@ -133,11 +128,11 @@ public class ModifyPartScreenController {
             if (partInHouseRadio.isSelected()) {
                 int machineID = Integer.parseInt(partFields[5].getText().trim());
                 checkPos(machineID);
-                Inventory.updatePart(id, new InHouse(id, name, price, stock, min, max, machineID));
+                updatePart(id, new InHouse(id, name, price, stock, min, max, machineID));
             } else {
                 String companyName = partFields[5].getText().trim();
                 checkEmpty(companyName);
-                Inventory.updatePart(id, new Outsourced(id, name, price, stock, min, max, companyName));
+                updatePart(id, new Outsourced(id, name, price, stock, min, max, companyName));
             }
             viewScreen(event, mainScreenFxmlUrl);
         }
@@ -180,7 +175,8 @@ public class ModifyPartScreenController {
         }
     }
 
-    // Radio Button Handlers - Changes text in Unique Label and Field based on the selection
+    // Radio Button Handlers
+    // Changes the text for the Unique label and field based on the radio button selected
     @FXML
     void partInHouseRadioHandler(ActionEvent event) {
         partUniqueLabel.setText("Machine ID");
