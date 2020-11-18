@@ -65,5 +65,6 @@
             </TableView>
          </children>
       </AnchorPane>
+      <Button fx:id="prodExitButton" layoutX="1012.0" layoutY="452.0" mnemonicParsing="false" onMouseClicked="#prodExitHandler" prefHeight="34.0" prefWidth="97.0" text="Exit" />
    </children>
 </AnchorPane>

@@ -5,16 +5,12 @@ import Model.Product;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.fxml.Initializable;
 import javafx.stage.Stage;
-
-import javax.security.auth.DestroyFailedException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Queue;
 import java.util.ResourceBundle;
 
 import static Model.Inventory.*;
@@ -72,6 +68,9 @@ public class MainScreenController implements Initializable {
     private Button prodSearchButton;
 
     @FXML
+    private Button prodExitButton;
+
+    @FXML
     private TextField prodSearchField;
 
     @FXML
@@ -89,77 +88,84 @@ public class MainScreenController implements Initializable {
     @FXML
     private TableColumn<Product, Integer> prodPriceCol;
 
+    // Sends user to Add Part Screen when clicking on the Add button in the Part section
     @FXML
     void partAddHandler(MouseEvent event) throws IOException {
         viewScreen(event, addPartScreenFxmlUrl);
     }
 
+    // Deletes the selected part if it is not the only associated part for a specific product when
+    // clicking the Delete Button in the Part section
     @FXML
     void partDeleteHandler(MouseEvent event) {
         deleteSelectedPart(partTable);
     }
 
+
+    @FXML
+    void prodExitHandler(MouseEvent event) {
+        exitProgram(event);
+    }
+
+    // Sends user to the Modify Part screen with the information for the selected part pre-populated when
+    // clicking the Modify Button in the Part section
     @FXML
     void partModifyHandler(MouseEvent event) throws IOException {
         modifySelectedPart(this, partTable, event);
     }
 
+    // Searches for a part by name or ID when clicking on the Search Button in the Part section
     @FXML
     void partSearchHandler(MouseEvent event) {
         searchPart(partSearchField, partTable);
     }
 
+    // Sends user to the add product screen when clicking on the Add button in the Product section
     @FXML
     void prodAddHandler(MouseEvent event) throws IOException {
         viewScreen(event, Utility.addProductScreenFxmlUrl);
     }
 
+    // Deletes the selected product when clicking on the delete button in the Products section
     @FXML
     void prodDeleteHandler(MouseEvent event) {
         deleteSelectedProduct(prodTable);
     }
 
+    // Sends user to the Modify Product screen with the information for the selected part pre-populated when
+    // clicking the Modify Button in the Product section
     @FXML
     void prodModifyHandler(MouseEvent event) throws IOException {
         modifySelectedProduct(this, prodTable, event);
     }
 
+    // Searches for a product by name or ID when clicking on the Search Button in the Product section
     @FXML
     void prodSearchHandler(MouseEvent event) {
         searchProduct(prodSearchField, prodTable);
     }
 
+    // Initializes the Main Screen and sets the Parts and Products tables
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
-        partTable.setItems(getAllParts());
-        partIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-        partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-        partInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        partPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
-
-        prodTable.setItems(getAllProducts());
-        prodIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-        prodNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-        prodInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        prodPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
-
+        setAllPartsTable(partTable, partIdCol, partNameCol, partInvCol, partPriceCol);
+        setAllProductsTable(prodTable, prodIdCol, prodNameCol, prodInvCol, prodPriceCol);
     }
 
-
-    // Only to be used on main screen as it deletes the part from all tables
+    // Function that deletes a selected part from the Main Screen (All Parts Table)
+    // Function will not complete and will alert user if the Part is the only associated part to a product
     private static void deleteSelectedPart(TableView<Part> partTable) {
         if (partTable.getSelectionModel().getSelectedItem() == null) {
             alertBox(alertType.error, selectPartDelete, invalidSelection);
-        }
-        else {
-            if(searchAssociatedParts(partTable.getSelectionModel().getSelectedItem())) {
+        } else {
+            if (searchAssociatedParts(partTable.getSelectionModel().getSelectedItem())) {
                 if (alertBox(alertType.confirmation, deletePartMain.concat(getSearchPartBuilder().toString()), confirmation)) {
                     deletePart(partTable.getSelectionModel().getSelectedItem(), getSearchProductQueue());
                     partTable.setItems(partTable.getItems());
                 }
-            }
-            else alertBox(alertType.error, onlyAssociatedPartError + getOnlyAssociatedPartBuilder(), invalidSelection);
+            } else
+                alertBox(alertType.error, onlyAssociatedPartError + getOnlyAssociatedPartBuilder(), invalidSelection);
         }
     }
+
 }

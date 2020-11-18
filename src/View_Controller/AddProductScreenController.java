@@ -1,19 +1,14 @@
-// PLEASE SEE ADD PART SCREEN CONTROLLER FOR MORE COMPLETE IMPLEMENTATION
-
 package View_Controller;
 
 import Model.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
 import static Model.Inventory.*;
 import static View_Controller.Utility.*;
 
@@ -112,16 +107,19 @@ public class AddProductScreenController implements Initializable {
     @FXML
     private TableColumn<Part, Double> associatedPartPriceCol;
 
+    //
     @FXML
     void partAddHandler(MouseEvent event) {
         addAssociatedPartButton(partTable, associatedPartTable, partIdCol);
     }
 
+    // Sends user back to the main screen, but confirms they want to first
     @FXML
     void prodCancelHandler(MouseEvent event) throws IOException {
         cancelButton(event);
     }
 
+    // Validates all text fields, will warn if error is found, otherwise will create a part and return user to main screen
     @FXML
     void prodSaveHandler(MouseEvent event) {
 
@@ -139,11 +137,7 @@ public class AddProductScreenController implements Initializable {
 
         // Validation that styles text fields but does not throw error
         // Returns text field to queue for future reference
-        checkString(prodFields[0]);
-        checkIntEmpty(prodFields[1], inventoryLevel.stock);
-        checkDbl(prodFields[2]);
-        checkIntEmpty(prodFields[3], inventoryLevel.max);
-        checkIntEmpty(prodFields[4], inventoryLevel.min);
+        validateInput(prodFields);
 
         // Input validation that will throw error if unsuccessful
         // If no errors, will create new prod based on the prod type selected
@@ -165,7 +159,7 @@ public class AddProductScreenController implements Initializable {
             checkStock(prodFields[1], min, max);
             checkAssociatedParts(associatedPartTable);
             addProduct(new Product(id, name, price, stock, min, max));
-            for(Part associatedPart : associatedPartTable.getItems()) lookupProduct(id).addAssociatedPart(associatedPart);
+            lookupProduct(id).addAssociatedPart(associatedPartTable.getItems());
             viewScreen(event, mainScreenFxmlUrl);
         }
         catch (NumberFormatException e) {
@@ -174,7 +168,7 @@ public class AddProductScreenController implements Initializable {
 
                 errorBuilder.append(errorMap.get(errorQ.poll().getId()) + "\n");
             }
-            alertBox(errorFields, errorBuilder, fieldInput);
+            alertBox(alertType.error, errorFields.concat(errorBuilder.toString()), fieldInput);
         }
 
         // Catches errors that have already generated an alert box
@@ -194,16 +188,7 @@ public class AddProductScreenController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        partTable.setItems(getAllParts());
-        partIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-        partNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-        partInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        partPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
-
-        associatedPartIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-        associatedPartNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-        associatedPartInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        associatedPartPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
-        associatedPartTable.getSortOrder().add(associatedPartIdCol);
+        setAllPartsTable(partTable, partIdCol, partNameCol, partInvCol, partPriceCol, SelectionMode.MULTIPLE);
+        setAssociatedPartTable(associatedPartIdCol, associatedPartInvCol, associatedPartNameCol, associatedPartPriceCol, associatedPartTable);
     }
 }

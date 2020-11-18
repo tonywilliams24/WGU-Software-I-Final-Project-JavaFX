@@ -3,8 +3,6 @@ package Model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.util.Queue;
-
 public class Product {
 
     private ObservableList<Part> associatedParts = FXCollections.observableArrayList();
@@ -60,22 +58,11 @@ public class Product {
     public int getMax(){
         return max;
     }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", stock=" + stock +
-                ", min=" + min +
-                ", max=" + max +
-                '}';
-    }
     
     public void addAssociatedPart(Part newPart) {
         associatedParts.add(newPart);
     }
+
     public Part lookupAssociatedPart(int partID) {
         if(!associatedParts.isEmpty()) {
             for (int i = 0; i < associatedParts.size(); i++) {
@@ -84,6 +71,7 @@ public class Product {
         }
         return null;
     }
+
     public Part lookupAssociatedPart(String partName) {
         if(!associatedParts.isEmpty()) {
             for (int i = 0; i < associatedParts.size(); i++) {
@@ -92,14 +80,21 @@ public class Product {
         }
         return null;
     }
+
     public void updateAssociatedPart(int index, Part selectedPart) {
         associatedParts.add(index, selectedPart);
         associatedParts.remove(++index);
     }
+
     public boolean deleteAssociatedPart(Part selectedPart) {
         return associatedParts.remove(selectedPart);
     }
+
     public ObservableList<Part> getAllAssociatedParts() {
         return associatedParts;
+    }
+
+    public void addAssociatedPart(ObservableList <Part> newParts) {
+        associatedParts.addAll(newParts);
     }
 }
